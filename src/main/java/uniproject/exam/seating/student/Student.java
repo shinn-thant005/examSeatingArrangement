@@ -7,51 +7,51 @@ import jakarta.persistence.Id;
 @Entity()
 public class Student {
     @Id
-    private String roll_no;
+    private String rollNo;
 
     private String name;
-    private String major_id;
-    private int assigned_room;
+    private String majorId;
+    private int assignedRoom;
 
 
     public Student(){}
 
-    public Student(String roll_no, String name, String major_id) {
-        this.roll_no = roll_no;
+    public Student(String rollNo, String name, String majorId) {
+        this.rollNo = rollNo;
         this.name = name;
-        this.major_id = major_id;
+        this.majorId = majorId;
     }
 
-    public String getRoll_no() {
-        return roll_no;
+    public String getRollNo() {
+        return rollNo;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getMajor_id() {
-        return major_id;
+    public String getMajorId() {
+        return majorId;
     }
 
-    public int getAssigned_room() {
-        return assigned_room;
+    public int getAssignedRoom() {
+        return assignedRoom;
     }
 
-    public void setRoll_no(String roll_no) {
-        this.roll_no = roll_no;
+    public void setRollNo(String rollNo) {
+        this.rollNo = rollNo;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setMajor_id(String major_id) {
-        this.major_id = major_id;
+    public void setMajorId(String majorId) {
+        this.majorId = majorId;
     }
 
-    public void setAssigned_room(int assigned_room) {
-        this.assigned_room = assigned_room;
+    public void setAssignedRoom(int assignedRoom) {
+        this.assignedRoom = assignedRoom;
     }
 }
 
