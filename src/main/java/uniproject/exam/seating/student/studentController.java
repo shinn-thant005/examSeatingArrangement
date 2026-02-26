@@ -11,9 +11,15 @@ import java.util.List;
 @RestController
 public class studentController {
 
+    studentService studentService;
+
+    public studentController(studentService studentService) {
+        this.studentService = studentService;
+    }
+
     @RequestMapping("list-student")
     public List<Student> listStudent(){
-        List<Student> students = new ArrayList<>();
-        return students;
+        return studentService.findAllStudent();
     }
 }
+
