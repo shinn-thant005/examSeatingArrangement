@@ -1,5 +1,6 @@
 package uniproject.exam.seating.student;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -7,24 +8,19 @@ import java.util.List;
 
 @Service
 public class studentService {
-    public static List<Student> students = new ArrayList<>();
+    private studentService studentService;
 
-    private static int studentCount = 3;
-
-    static {
-        students.add(new Student("II CST-1", "Max Vesteppan", "CST"));
-        students.add(new Student("II CST-2", "Lewis Hilminton", "CST"));
-        students.add(new Student("II CST-3", "Mr Beast", "CST"));
-        students.add(new Student("II CST-4", "Jake Paul", "CST"));
+    public studentService(studentService studentService) {
+        this.studentService = studentService;
     }
 
     public List<Student> findAllStudent() {
-        return students;
+        return studentService.findAll();
     }
 
     public void addStudent(String roll_no, String name, String major_id) {
         Student student = new Student(roll_no, name, major_id);
-        students.add(student);
+        studentService.save(student);
     }
 
 }

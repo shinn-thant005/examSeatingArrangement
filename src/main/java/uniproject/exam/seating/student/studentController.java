@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static uniproject.exam.seating.student.studentService.students;
 
 @RestController
 public class studentController {
