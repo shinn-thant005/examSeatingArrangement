@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public class studentService {
-    static List<Student> students = new ArrayList<>();
+    public static List<Student> students = new ArrayList<>();
 
     private static int studentCount = 3;
 
@@ -18,7 +18,11 @@ public class studentService {
         students.add(new Student("II CST-4", "Jake Paul", "CST"));
     }
 
-    private void addStudent(String roll_no, String name, String major_id) {
+    public List<Student> findAllStudent() {
+        return students;
+    }
+
+    public void addStudent(String roll_no, String name, String major_id) {
         Student student = new Student(roll_no, name, major_id);
         students.add(student);
     }

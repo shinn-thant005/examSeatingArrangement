@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 @Entity()
 public class Student {
     @Id
-    @GeneratedValue()
     private String roll_no;
 
     private String name;
