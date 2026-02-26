@@ -1,23 +1,26 @@
 package uniproject.exam.seating.student;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Service
+public class studentService {
+    private studentRepository studentRepository;
 
-@RestController
-public class studentController {
-
-    private studentService studentService;
-
-    public studentController(studentService studentService) {
-        this.studentService = studentService;
+    public studentService(studentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    @RequestMapping("student-list")
-    public List<Student> goToStudent() {
-        return studentService.findAllStudent();
+    public List<Student> findAllStudent() {
+        return studentRepository.findAll();
+    }
+
+    public void addStudent(String roll_no, String name, String major_id) {
+        Student student = new Student(roll_no, name, major_id);
+        studentRepository.save(student);
     }
 
 }
