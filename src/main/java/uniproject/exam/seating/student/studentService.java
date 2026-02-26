@@ -1,10 +1,8 @@
 package uniproject.exam.seating.student;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class studentService {
@@ -23,9 +21,8 @@ public class studentService {
         studentRepository.save(student);
     }
 
-    public void deleteStudent(String roll_no) {
-        Student student = studentRepository.findStudentByRollNo(roll_no);
-        studentRepository.delete(student);
+    public void deleteStudentByRollNo(String roll_no) {
+        studentRepository.deleteStudentByRollNo(roll_no);
     }
 
 }

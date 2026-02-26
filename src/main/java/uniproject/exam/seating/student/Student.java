@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 @Entity()
 public class Student {
     @Id
-    private String rollNo;
+    private String RollNo;
 
     private String name;
     private String majorId;
@@ -15,14 +15,14 @@ public class Student {
 
     public Student(){}
 
-    public Student(String rollNo, String name, String majorId) {
-        this.rollNo = rollNo;
+    public Student(String RollNo, String name, String majorId) {
+        this.RollNo = RollNo;
         this.name = name;
         this.majorId = majorId;
     }
 
     public String getRollNo() {
-        return rollNo;
+        return RollNo;
     }
 
     public String getName() {
@@ -37,8 +37,8 @@ public class Student {
         return assignedRoom;
     }
 
-    public void setRollNo(String rollNo) {
-        this.rollNo = rollNo;
+    public void setRollNo(String RollNo) {
+        this.RollNo = RollNo;
     }
 
     public void setName(String name) {

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface studentRepository extends JpaRepository<Student, String> {
     public List<Student> findStudentByRollNo(String roll_no);
+
+    public void deleteStudentByRollNo(String roll_no);
 }
