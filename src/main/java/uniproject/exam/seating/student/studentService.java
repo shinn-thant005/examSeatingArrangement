@@ -8,19 +8,19 @@ import java.util.List;
 
 @Service
 public class studentService {
-    private studentService studentService;
+    private studentRepository studentRepository;
 
-    public studentService(studentService studentService) {
-        this.studentService = studentService;
+    public studentService(studentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     public List<Student> findAllStudent() {
-        return studentService.findAll();
+        return studentRepository.findAll();
     }
 
     public void addStudent(String roll_no, String name, String major_id) {
         Student student = new Student(roll_no, name, major_id);
-        studentService.save(student);
+        studentRepository.save(student);
     }
 
 }
