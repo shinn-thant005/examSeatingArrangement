@@ -29,11 +29,10 @@ public class invigilatorController {
         return "Deleted invigilator with id " + invigilatorId;
     }
 
-    @PostMapping("/update-invigilator")
-    public String updateInvigilator(@RequestBody invigilator invigilator) {
-        invigilatorService.updateInvigilator(invigilator.getInvigilatorId(), invigilator.getInvigilatorName(), invigilator.getDepartment());
-        return "Updated invigilator with id " + invigilator.getInvigilatorId();
+    @PutMapping("/update-invigilator/{invigilatorId}")
+    public String updateInvigilator(@PathVariable Integer invigilatorId, @RequestBody invigilator invigilator) {
+        invigilatorService.updateInvigilator(invigilatorId,  invigilator.getInvigilatorName(), invigilator.getDepartment());
+        return "Updated invigilator with id " + invigilatorId;
     }
-
 
 }
