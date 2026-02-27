@@ -24,7 +24,7 @@ public class invigilatorController {
     }
 
     @DeleteMapping("/delete-invigilator/{invigilatorId}")
-    public String deleteInvigilatorById(@PathVariable int invigilatorId) {
+    public String deleteInvigilatorById(@PathVariable Integer invigilatorId) {
         invigilatorService.deleteInvigilator(invigilatorId);
         return "Deleted invigilator with id " + invigilatorId;
     }

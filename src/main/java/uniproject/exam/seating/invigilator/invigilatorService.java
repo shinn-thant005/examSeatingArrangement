@@ -19,13 +19,14 @@ public class invigilatorService {
         return invigilatorRepository.findAll();
     }
 
-    public void addInvigilator(int id, String name, String department) {
+    public void addInvigilator(Integer id, String name, String department) {
         invigilator invigilator = new invigilator(id, name, department);
         invigilatorRepository.save(invigilator);
     }
 
-    public void deleteInvigilator(int id) {
-        invigilator invigilator = invigilatorRepository.findById(id).get();
-        invigilatorRepository.delete(invigilator);
+    public void deleteInvigilator(Integer id) {
+        if (invigilatorRepository.existsById(id)) {
+            invigilatorRepository.deleteById(id);
+        }
     }
 }

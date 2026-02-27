@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 public class invigilator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int invigilatorId;
+    private Integer invigilatorId;
 
     private String invigilatorName;
     private String department;

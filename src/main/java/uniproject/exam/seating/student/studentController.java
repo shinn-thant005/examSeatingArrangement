@@ -24,10 +24,10 @@ public class studentController {
         return "success adding student";
     }
 
-    @DeleteMapping("delete-student/{roll_no}")
-    public String deleteStudent(@PathVariable String roll_no) {
-        studentService.deleteStudentByRollNo(roll_no);
-        return "Student with roll no " + roll_no + " deleted";
+    @DeleteMapping("delete-student/{rollNo}")
+    public String deleteStudent(@PathVariable String rollNo) {
+        studentService.deleteStudentByRollNo(rollNo);
+        return "Student with roll no " + rollNo + " deleted";
     }
 
     @PostMapping("/update-student")
