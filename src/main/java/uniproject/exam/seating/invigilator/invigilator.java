@@ -16,13 +16,13 @@ public class invigilator {
 
     public invigilator() {}
 
-    public invigilator(int invigilatorId, String invigilatorName, String department) {
+    public invigilator(Integer invigilatorId, String invigilatorName, String department) {
         this.invigilatorId = invigilatorId;
         this.invigilatorName = invigilatorName;
         this.department = department;
     }
 
-    public int getInvigilatorId() {
+    public Integer getInvigilatorId() {
         return invigilatorId;
     }
 
@@ -34,7 +34,7 @@ public class invigilator {
         return department;
     }
 
-    public void setInvigilatorId(int invigilatorId) {
+    public void setInvigilatorId(Integer invigilatorId) {
         this.invigilatorId = invigilatorId;
     }
 

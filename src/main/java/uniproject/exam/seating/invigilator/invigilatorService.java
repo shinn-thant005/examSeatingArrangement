@@ -29,4 +29,9 @@ public class invigilatorService {
             invigilatorRepository.deleteById(id);
         }
     }
+
+    public void updateInvigilator(Integer id, String name, String department) {
+        invigilator invigilator = new invigilator(id, name, department);
+        invigilatorRepository.save(invigilator);
+    }
 }

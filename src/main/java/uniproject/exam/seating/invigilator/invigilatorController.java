@@ -29,5 +29,11 @@ public class invigilatorController {
         return "Deleted invigilator with id " + invigilatorId;
     }
 
+    @PostMapping("/update-invigilator")
+    public String updateInvigilator(@RequestBody invigilator invigilator) {
+        invigilatorService.updateInvigilator(invigilator.getInvigilatorId(), invigilator.getInvigilatorName(), invigilator.getDepartment());
+        return "Updated invigilator with id " + invigilator.getInvigilatorId();
+    }
+
 
 }
