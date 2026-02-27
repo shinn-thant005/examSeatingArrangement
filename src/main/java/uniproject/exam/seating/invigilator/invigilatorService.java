@@ -16,6 +16,16 @@ public class invigilatorService {
     static List<invigilator> invigilators = new ArrayList<invigilator>();
 
     public List<invigilator> findAllInvigilator() {
-        return invigilatorRepository.findAllByInvigilatorId();
+        return invigilatorRepository.findAll();
+    }
+
+    public void addInvigilator(int id, String name, String department) {
+        invigilator invigilator = new invigilator(id, name, department);
+        invigilatorRepository.save(invigilator);
+    }
+
+    public void deleteInvigilator(int id) {
+        invigilator invigilator = invigilatorRepository.findById(id).get();
+        invigilatorRepository.delete(invigilator);
     }
 }
