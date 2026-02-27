@@ -21,8 +21,7 @@ public class studentService {
         studentRepository.save(student);
     }
 
-    public void deleteStudentByRollNo(String roll_no) {
-        studentRepository.deleteStudentByRollNo(roll_no);
+    public void deleteStudentByRollNo(String RollNo) {
+        studentRepository.deleteStudentByRollNo(RollNo);
     }
-
 }
