@@ -29,5 +29,11 @@ public class studentController {
         studentService.deleteStudentByRollNo(roll_no);
         return "Student with roll no " + roll_no + " deleted";
     }
+
+    @PostMapping("/update-student")
+    public String  updateStudent(@RequestBody Student student) {
+        studentService.updateStudentByRollNo(student.getRollNo(), student.getName(), student.getMajorId());
+        return "Student with roll no " + student.getRollNo() + " updated";
+    }
 }
 
