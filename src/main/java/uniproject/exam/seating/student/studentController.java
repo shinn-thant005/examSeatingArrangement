@@ -1,11 +1,6 @@
 package uniproject.exam.seating.student;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
@@ -17,9 +12,22 @@ public class studentController {
         this.studentService = studentService;
     }
 
-    @RequestMapping("list-student")
+    @RequestMapping("/list-student")
     public List<Student> listStudent(){
         return studentService.findAllStudent();
+    }
+
+
+    @PostMapping("/add-student")
+    public String addStudent(@RequestBody Student student){
+        studentService.addStudent(student.getRollNo(), student.getName(), student.getMajorId());
+        return "success adding student";
+    }
+
+    @DeleteMapping("delete-student/{roll_no}")
+    public String deleteStudent(@PathVariable String roll_no) {
+        studentService.deleteStudentByRollNo(roll_no);
+        return "Student with roll no " + roll_no + " deleted";
     }
 }
 
