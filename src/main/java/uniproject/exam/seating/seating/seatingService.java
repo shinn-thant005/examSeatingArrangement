@@ -11,6 +11,7 @@ import java.util.*;
 @Service
 public class seatingService {
 
+    private final seatingRepository seatingRepo;
     private final studentRepository studentRepo;
     private final roomRepository roomRepo;
 
@@ -20,9 +21,10 @@ public class seatingService {
     private static final double MUTATION_RATE = 0.1;
     private static final int TOURNAMENT_SIZE = 5;
 
-    public seatingService(studentRepository studentRepo, roomRepository roomRepo) {
+    public seatingService(studentRepository studentRepo, roomRepository roomRepo,  seatingRepository seatingRepository) {
         this.studentRepo = studentRepo;
         this.roomRepo = roomRepo;
+        this.seatingRepo = seatingRepository;
     }
 
     // --- 1. THE MAIN CONTROLLER METHOD ---
@@ -104,6 +106,14 @@ public class seatingService {
                     s.setSeated(true);
                     s.setAssignedRoom(room);
                     studentRepo.save(s); // Update database
+
+                    // 2. Save the exact seat coordinates to the Seating table (NEW LOGIC)
+                    Seating seatingRecord = new Seating();
+                    seatingRecord.setStudent(s);
+                    seatingRecord.setRoom(room);
+                    seatingRecord.setRowNum(r);
+                    seatingRecord.setColumnNum(c);
+                    seatingRepo.save(seatingRecord);
                 }
             }
         }
