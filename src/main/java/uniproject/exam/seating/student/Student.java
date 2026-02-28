@@ -13,13 +13,12 @@ public class Student {
 
     private String name;
     private String majorId;
-    private int assignedRoomId;
     private boolean isSeated; // Default to false
 
+    // This relationship handles the assigned_room_id column entirely
     @ManyToOne
     @JoinColumn(name = "assigned_room_id")
     private Room assignedRoom;
-
 
     public Student(){}
 
@@ -42,20 +41,17 @@ public class Student {
         return majorId;
     }
 
-    public int getAssignedRoom() {
-        return assignedRoomId;
-    }
-
     public boolean isSeated() {
         return isSeated;
     }
 
-    public int getAssignedRoomId() {
-        return assignedRoomId;
+    // Corrected to return the Room object
+    public Room getAssignedRoom() {
+        return assignedRoom;
     }
 
-    public void setRollNo(String RollNo) {
-        this.rollNo = RollNo;
+    public void setRollNo(String rollNo) {
+        this.rollNo = rollNo;
     }
 
     public void setName(String name) {
@@ -66,10 +62,6 @@ public class Student {
         this.majorId = majorId;
     }
 
-    public void setAssignedRoomId(int assignedRoomId) {
-        this.assignedRoomId = assignedRoomId;
-    }
-
     public void setSeated(boolean seated) {
         isSeated = seated;
     }
@@ -77,6 +69,4 @@ public class Student {
     public void setAssignedRoom(Room assignedRoom) {
         this.assignedRoom = assignedRoom;
     }
-
 }
-
