@@ -102,6 +102,7 @@ public class seatingService {
                 Student s = bestSolution.seating[r][c];
                 if (s != null) {
                     s.setSeated(true);
+                    s.setAssignedRoom(room);
                     studentRepo.save(s); // Update database
                 }
             }

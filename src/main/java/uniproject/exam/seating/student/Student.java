@@ -2,6 +2,9 @@ package uniproject.exam.seating.student;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import uniproject.exam.seating.room.Room;
 
 @Entity()
 public class Student {
@@ -10,8 +13,12 @@ public class Student {
 
     private String name;
     private String majorId;
-    private int assignedRoom;
+    private int assignedRoomId;
     private boolean isSeated; // Default to false
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_room_id")
+    private Room assignedRoom;
 
 
     public Student(){}
@@ -36,11 +43,15 @@ public class Student {
     }
 
     public int getAssignedRoom() {
-        return assignedRoom;
+        return assignedRoomId;
     }
 
     public boolean isSeated() {
         return isSeated;
+    }
+
+    public int getAssignedRoomId() {
+        return assignedRoomId;
     }
 
     public void setRollNo(String RollNo) {
@@ -55,12 +66,17 @@ public class Student {
         this.majorId = majorId;
     }
 
-    public void setAssignedRoom(int assignedRoom) {
-        this.assignedRoom = assignedRoom;
+    public void setAssignedRoomId(int assignedRoomId) {
+        this.assignedRoomId = assignedRoomId;
     }
 
     public void setSeated(boolean seated) {
         isSeated = seated;
     }
+
+    public void setAssignedRoom(Room assignedRoom) {
+        this.assignedRoom = assignedRoom;
+    }
+
 }
 
