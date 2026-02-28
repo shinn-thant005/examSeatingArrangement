@@ -35,5 +35,18 @@ public class studentController {
         studentService.updateStudentByRollNo(student.getRollNo(), student.getName(), student.getMajorId());
         return "Student with roll no " + student.getRollNo() + " updated";
     }
+
+    @PostMapping("/reset-all")
+    public String resetAllStudent() {
+        studentService.resetAllStudent();
+        return "All students have been reset";
+    }
+
+    @PostMapping("/reset-room/{roomId}")
+    public String resetRoom(@PathVariable Integer roomId) {
+        studentService.resetRoomSelection(roomId);
+        return "Assignments for Room ID " + roomId + " have been cleared.";
+    }
+
 }
 

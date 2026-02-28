@@ -29,4 +29,12 @@ public class studentService {
         Student student = new  Student(rollNo, name, major_id);
         studentRepository.save(student);
     }
+
+    public void resetAllStudent() {
+        studentRepository.resetAllStudent();
+    }
+
+    public void resetRoomSelection(Integer roomId) {
+        studentRepository.resetStudentByRoom(roomId);
+    }
 }
