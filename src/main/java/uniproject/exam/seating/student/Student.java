@@ -11,6 +11,7 @@ public class Student {
     private String name;
     private String majorId;
     private int assignedRoom;
+    private boolean isSeated; // Default to false
 
 
     public Student(){}
@@ -19,6 +20,7 @@ public class Student {
         this.rollNo = rollNo;
         this.name = name;
         this.majorId = majorId;
+        this.isSeated = false;
     }
 
     public String getRollNo() {
@@ -37,6 +39,10 @@ public class Student {
         return assignedRoom;
     }
 
+    public boolean isSeated() {
+        return isSeated;
+    }
+
     public void setRollNo(String RollNo) {
         this.rollNo = RollNo;
     }
@@ -51,6 +57,10 @@ public class Student {
 
     public void setAssignedRoom(int assignedRoom) {
         this.assignedRoom = assignedRoom;
+    }
+
+    public void setSeated(boolean seated) {
+        isSeated = seated;
     }
 }
 

@@ -11,4 +11,7 @@ public interface studentRepository extends JpaRepository<Student, String> {
     @Transactional // Required for custom deletes
     @Modifying    // Required for data modification
     public void deleteStudentByRollNo(String roll_no);
+
+    // Add this method inside the studentRepository interface
+    public List<Student> findByIsSeatedFalse();
 }
