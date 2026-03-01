@@ -333,12 +333,18 @@ public class seatingService {
         public void setLayout(List<List<String>> layout) { this.layout = layout; }
     }
 
+
     public void deleteSeatingPlan(Integer SeatingId) {
+        Seating currentSeating = seatingRepo.findById(SeatingId).orElse(null);
+        Student student = currentSeating.getStudent();
+        student.setSeated(false);
+        student.setAssignedRoom(null);
         seatingRepo.deleteById(SeatingId);
     }
 
-    public void deleteSeatingPlanByRoomId(Integer RoomId) {
-        seatingRepo.deleteAllByRoom_RoomId(RoomId);
+    public void deleteSeatingPlanByRoomId(Integer roomId) {
+        studentRepo.resetStudentByRoom(roomId);
+        seatingRepo.deleteAllByRoom_RoomId(roomId);
     }
 
     public void updateSeatingPlan(Integer seatingId, String rollNo, String roomName, Integer rowNum, Integer columnNum) {

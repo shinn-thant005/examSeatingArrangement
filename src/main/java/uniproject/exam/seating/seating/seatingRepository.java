@@ -3,7 +3,9 @@ package uniproject.exam.seating.seating;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import uniproject.exam.seating.room.Room;
+import uniproject.exam.seating.student.Student;
 
+import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 

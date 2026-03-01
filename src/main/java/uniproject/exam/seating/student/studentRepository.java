@@ -18,4 +18,5 @@ public interface studentRepository extends JpaRepository<Student, String> {
     @Modifying
     @Query("UPDATE Student s SET s.isSeated = false, s.assignedRoom = null WHERE s.assignedRoom.roomId = :roomId")
     void resetStudentByRoom(Integer roomId);
+
 }
