@@ -340,4 +340,9 @@ public class seatingService {
     public void deleteSeatingPlanByRoomId(Integer RoomId) {
         seatingRepo.deleteAllByRoom_RoomId(RoomId);
     }
+
+    public void updateSeatingPlan(Integer seatingId, String rollNo, Integer roomId, Integer rowNum, Integer columnNum) {
+        Seating seating = new Seating(seatingId, rollNo, roomId, rowNum, columnNum);
+        seatingRepo.save(seating);
+    }
 }

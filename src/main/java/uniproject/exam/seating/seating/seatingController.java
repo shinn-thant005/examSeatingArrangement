@@ -1,9 +1,6 @@
 package uniproject.exam.seating.seating;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class seatingController {
@@ -35,5 +32,16 @@ public class seatingController {
         seatingService.deleteSeatingPlanByRoomId(roomId);
         return "The seating plan with id " + roomId + " has been deleted.";
     }
+
+    @PutMapping("update-plan/{seatingId}")
+    public String updatePlan(@RequestBody Seating seating, @PathVariable Integer seatingId) {
+        seatingService.updateSeatingPlan(seatingId, seating.getStudent().getMajorId(), seating.getRoom().getRoomId(), seating.getColumnNum(), seating.getRowNum());
+        return "The seating plan with id " + seatingId + " has been updated.\n" +
+                "New student: " + seating.getStudent().getMajorId() + "\n" +
+                "New Room: " + seating.getRoom().getRoomId() + "\n" +
+                "New Position: (" + seating.getRowNum() + ", " + seating.getColumnNum() + ")";
+
+    }
+
 
 }

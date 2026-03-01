@@ -5,6 +5,12 @@ import uniproject.exam.seating.room.Room;
 import uniproject.exam.seating.student.Student;
 
 @Entity
+@Table(name = "seating", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "uk_room_row_column",
+                columnNames = {"roomId", "rowNum", "columnNum"}
+        )
+})
 public class Seating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
