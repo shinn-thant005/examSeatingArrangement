@@ -121,6 +121,50 @@ public class seatingService {
         return convertToResponse(room, bestSolution, rows, cols);
     }
 
+    // --- ADD THIS BELOW YOUR generateSeatingPlan METHOD ---
+
+    public SeatingPlanResponse getSavedSeatingPlan(Integer roomId) {
+        Room room = roomRepo.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found with ID: " + roomId));
+
+        // Fetch the saved coordinates from the database
+        List<Seating> savedSeats = seatingRepo.findByRoom_RoomId(roomId);
+
+        if (savedSeats.isEmpty()) {
+            throw new RuntimeException("No seating plan found for this room. Please generate it first!");
+        }
+
+        int rows = room.getRowCapacity();
+        int cols = room.getColumnCapacity();
+
+        // Create an empty grid
+        String[][] gridArray = new String[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                gridArray[r][c] = "EMPTY";
+            }
+        }
+
+        // Fill the grid using the coordinates saved in the database
+        for (Seating seat : savedSeats) {
+            Student s = seat.getStudent();
+            gridArray[seat.getRowNum()][seat.getColumnNum()] = s.getRollNo() + " (" + s.getMajorId() + ")";
+        }
+
+        // Convert to the Response DTO for the frontend
+        SeatingPlanResponse response = new SeatingPlanResponse();
+        response.setRoomName(room.getRoomName());
+        response.setFloor(room.getFloor());
+
+        List<List<String>> gridList = new ArrayList<>();
+        for (int r = 0; r < rows; r++) {
+            gridList.add(Arrays.asList(gridArray[r]));
+        }
+        response.setLayout(gridList);
+
+        return response;
+    }
+
     // --- 2. GENETIC ALGORITHM METHODS ---
 
     private int calculateFitness(Individual ind, int rows, int cols) {
@@ -287,5 +331,13 @@ public class seatingService {
         public void setFloor(Integer floor) { this.floor = floor; }
         public List<List<String>> getLayout() { return layout; }
         public void setLayout(List<List<String>> layout) { this.layout = layout; }
+    }
+
+    public void deleteSeatingPlan(Integer SeatingId) {
+        seatingRepo.deleteById(SeatingId);
+    }
+
+    public void deleteSeatingPlanByRoomId(Integer RoomId) {
+        seatingRepo.deleteAllByRoom_RoomId(RoomId);
     }
 }
