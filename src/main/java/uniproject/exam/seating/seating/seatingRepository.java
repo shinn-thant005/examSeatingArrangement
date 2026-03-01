@@ -2,8 +2,10 @@ package uniproject.exam.seating.seating;
 
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import uniproject.exam.seating.room.Room;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface seatingRepository extends JpaRepository<Seating, Integer> {
     // Fetch all seated students for a specific room
@@ -18,6 +20,5 @@ public interface seatingRepository extends JpaRepository<Seating, Integer> {
 
     @Transactional
     void deleteAllByRoom_RoomId(Integer roomId);
-
 
 }

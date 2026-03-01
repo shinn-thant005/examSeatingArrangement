@@ -341,8 +341,25 @@ public class seatingService {
         seatingRepo.deleteAllByRoom_RoomId(RoomId);
     }
 
-    public void updateSeatingPlan(Integer seatingId, String rollNo, Integer roomId, Integer rowNum, Integer columnNum) {
-        Seating seating = new Seating(seatingId, rollNo, roomId, rowNum, columnNum);
-        seatingRepo.save(seating);
+    public void updateSeatingPlan(Integer seatingId, String rollNo, String roomName, Integer rowNum, Integer columnNum) {
+        Seating existingSeating = seatingRepo.findById(seatingId)
+                .orElseThrow(() -> new RuntimeException("Seating record not found with ID: " + seatingId));
+
+        Student student = studentRepo.findById(rollNo)
+                .orElseThrow(() -> new RuntimeException("Student not found with Roll No: " + rollNo));
+
+        Room room = roomRepo.findByRoomName(roomName)
+                .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
+
+        existingSeating.setStudent(student);
+        existingSeating.setRoom(room);
+        existingSeating.setRowNum(rowNum);
+        existingSeating.setColumnNum(columnNum);
+        seatingRepo.save(existingSeating);
+
+        student.setAssignedRoom(room);
+        student.setSeated(true);
+        studentRepo.save(student);
+
     }
 }
