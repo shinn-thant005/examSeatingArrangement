@@ -1,5 +1,6 @@
 package uniproject.exam.seating.seating;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import uniproject.exam.seating.room.Room;
 import uniproject.exam.seating.room.roomRepository;
@@ -347,25 +348,54 @@ public class seatingService {
         seatingRepo.deleteAllByRoom_RoomId(roomId);
     }
 
+    @Transactional
     public void updateSeatingPlan(Integer seatingId, String rollNo, String roomName, Integer rowNum, Integer columnNum) {
         Seating existingSeating = seatingRepo.findById(seatingId)
                 .orElseThrow(() -> new RuntimeException("Seating record not found with ID: " + seatingId));
 
-        Student student = studentRepo.findById(rollNo)
+        Student newStudent = studentRepo.findById(rollNo)
                 .orElseThrow(() -> new RuntimeException("Student not found with Roll No: " + rollNo));
 
-        Room room = roomRepo.findByRoomName(roomName)
+        Room newRoom = roomRepo.findByRoomName(roomName)
                 .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
 
-        existingSeating.setStudent(student);
-        existingSeating.setRoom(room);
+        // --- 1. BOUNDS CHECK: Is the seat inside the physical room? ---
+        // Assuming grids are 0-indexed (e.g., capacity 5 means valid rows are 0, 1, 2, 3, 4)
+        if (rowNum < 0 || rowNum >= newRoom.getRowCapacity() ||
+                columnNum < 0 || columnNum >= newRoom.getColumnCapacity()) {
+            throw new IllegalArgumentException("Position (" + rowNum + ", " + columnNum +
+                    ") is out of bounds. Room '" + roomName + "' dimensions are " +
+                    newRoom.getRowCapacity() + "x" + newRoom.getColumnCapacity() + ".");
+        }
+
+        // --- 2. OCCUPANCY CHECK: Is the seat already taken by someone else? ---
+        Optional<Seating> occupant = seatingRepo.findByRoom_RoomIdAndRowNumAndColumnNum(newRoom.getRoomId(), rowNum, columnNum);
+        // If we found an occupant, and it's NOT the exact same seating record we are currently updating...
+        if (occupant.isPresent() && !occupant.get().getSeatingId().equals(seatingId)) {
+            throw new IllegalStateException("The seat at row " + rowNum + ", column " + columnNum +
+                    " in " + roomName + " is already occupied by student " + occupant.get().getStudent().getRollNo());
+        }
+
+        // --- 3. DATA CONSISTENCY: Unseat the old student ---
+        // If you are editing the record to swap student A out for student B,
+        // student A must be marked as no longer seated.
+        Student oldStudent = existingSeating.getStudent();
+        if (oldStudent != null && !oldStudent.getRollNo().equals(rollNo)) {
+            oldStudent.setSeated(false);
+            oldStudent.setAssignedRoom(null);
+            studentRepo.save(oldStudent);
+        }
+
+        // --- 4. APPLY THE SAFE UPDATE ---
+        existingSeating.setStudent(newStudent);
+        existingSeating.setRoom(newRoom);
         existingSeating.setRowNum(rowNum);
         existingSeating.setColumnNum(columnNum);
         seatingRepo.save(existingSeating);
 
-        student.setAssignedRoom(room);
-        student.setSeated(true);
-        studentRepo.save(student);
-
+        // Update the new student's status
+        newStudent.setAssignedRoom(newRoom);
+        newStudent.setSeated(true);
+        studentRepo.save(newStudent);
     }
 }
