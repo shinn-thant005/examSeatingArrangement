@@ -35,7 +35,7 @@ public class seatingController {
 
     @PutMapping("update-plan/{seatingId}")
     public String updatePlan(@RequestBody updateSeatingRequest seating, @PathVariable Integer seatingId) {
-        seatingService.updateSeatingPlan(seatingId, seating.getRollNo(), seating.getRoomName(), seating.getColumnNum(), seating.getRowNum());
+        seatingService.updateSeatingPlan(seatingId, seating.getRollNo(), seating.getRoomName(), seating.getRowNum(), seating.getColumnNum());
         return "The seating plan with id " + seatingId + " has been updated.\n" +
                 "New student: " + seating.getRollNo() + "\n" +
                 "New Room: " + seating.getRoomName() + "\n" +
