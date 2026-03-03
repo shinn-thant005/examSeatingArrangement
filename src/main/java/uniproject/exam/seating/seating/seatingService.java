@@ -29,9 +29,14 @@ public class seatingService {
     }
 
     // --- 1. THE MAIN CONTROLLER METHOD ---
+    @Transactional
     public SeatingPlanResponse generateSeatingPlan(Integer roomId) {
         Room room = roomRepo.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found with ID: " + roomId));
+
+        // --- NEW FIX: Clear any existing plan for this room first ---
+        // This frees up the seats AND resets the students previously in this room
+        deleteSeatingPlanByRoomId(roomId);
 
         int rows = room.getRowCapacity();
         int cols = room.getColumnCapacity();
