@@ -38,6 +38,9 @@ public class seatingService {
         // This frees up the seats AND resets the students previously in this room
         deleteSeatingPlanByRoomId(roomId);
 
+        seatingRepo.flush();
+        studentRepo.flush();
+
         int rows = room.getRowCapacity();
         int cols = room.getColumnCapacity();
         int roomCapacity = rows * cols;
