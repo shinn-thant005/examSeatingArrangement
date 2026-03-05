@@ -3,6 +3,7 @@ package uniproject.exam.seating.seating;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/seating")
 public class seatingController {
     seatingService seatingService;
 

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/student")
 public class studentController {
 
     studentService studentService;
@@ -12,7 +13,7 @@ public class studentController {
         this.studentService = studentService;
     }
 
-    @RequestMapping("/list-student")
+    @GetMapping("/list-student")
     public List<Student> listStudent(){
         return studentService.findAllStudent();
     }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/room")
 public class roomController {
     roomService roomService;
 
@@ -12,7 +13,7 @@ public class roomController {
         this.roomService = roomService;
     }
 
-    @RequestMapping("/list-room")
+    @GetMapping("/list-room")
     public List<Room> listAllRooms() {
         return roomService.getAllRooms();
     }

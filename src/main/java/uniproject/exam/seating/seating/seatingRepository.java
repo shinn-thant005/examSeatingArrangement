@@ -22,7 +22,6 @@ public interface seatingRepository extends JpaRepository<Seating, Integer> {
     @Transactional
     void deleteBySeatingId(Integer seatingId);
 
-    // Replace your current deleteAllByRoom_RoomId with this:
     @Transactional
     @Modifying
     @Query("DELETE FROM Seating s WHERE s.room.roomId = :roomId")

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("api/v1/invigilator")
 public class invigilatorController {
     invigilatorService invigilatorService;
 
@@ -12,7 +13,7 @@ public class invigilatorController {
         this.invigilatorService = invigilatorService;
     }
 
-    @RequestMapping("/list-invigilator")
+    @GetMapping("/list-invigilator")
     public List<invigilator> listInvigilator() {
         return invigilatorService.findAllInvigilator();
     }
