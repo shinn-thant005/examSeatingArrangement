@@ -18,6 +18,8 @@ public class roomService {
     }
 
     public void addRoom(Room room) {
+        int calculatedTotal = room.getRowCapacity() * room.getColumnCapacity();
+        room.setRowCapacity(calculatedTotal);
         roomRepository.save(room);
     }
 
@@ -27,8 +29,8 @@ public class roomService {
         }
     }
 
-    public void updateRoomById(Integer roomId, Integer floor, String roomName, Integer totalCapacity, Integer rowCapacity, Integer columnCapacity) {
-        Room room = new Room(roomId, floor, roomName, totalCapacity, rowCapacity, columnCapacity);
+    public void updateRoomById(Integer roomId, Integer floor, String roomName, Integer rowCapacity, Integer columnCapacity) {
+        Room room = new Room(roomId, floor, roomName, rowCapacity * columnCapacity, rowCapacity, columnCapacity);
         roomRepository.save(room);
     }
 
