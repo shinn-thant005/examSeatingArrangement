@@ -31,7 +31,7 @@ public class studentController {
         return "Student with roll no " + rollNo + " deleted";
     }
 
-    @PostMapping("/update-student")
+    @PutMapping("/update-student")
     public String  updateStudent(@RequestBody Student student) {
         studentService.updateStudentByRollNo(student.getRollNo(), student.getName(), student.getMajorId());
         return "Student with roll no " + student.getRollNo() + " updated";

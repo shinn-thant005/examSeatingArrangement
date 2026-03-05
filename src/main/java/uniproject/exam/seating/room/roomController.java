@@ -30,7 +30,7 @@ public class roomController {
         return "Room has been deleted";
     }
 
-    @PostMapping("/update-room/{roomId}")
+    @PutMapping("/update-room/{roomId}")
     public String updateRoom(@PathVariable Integer roomId, @RequestBody Room room) {
         roomService.updateRoomById(roomId, room.getFloor(), room.getRoomName(), room.getTotalCapacity(), room.getColumnCapacity(), room.getRowCapacity());
     return "Room has been updated";
