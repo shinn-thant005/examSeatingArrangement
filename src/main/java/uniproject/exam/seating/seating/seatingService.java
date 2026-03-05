@@ -34,7 +34,6 @@ public class seatingService {
         Room room = roomRepo.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found with ID: " + roomId));
 
-        // --- NEW FIX: Clear any existing plan for this room first ---
         // This frees up the seats AND resets the students previously in this room
         deleteSeatingPlanByRoomId(roomId);
 
@@ -52,13 +51,30 @@ public class seatingService {
             throw new RuntimeException("No unseated students available in the database!");
         }
 
-        // --- NEW LOGIC: If there are more students than seats, take only what fits ---
-        List<Student> studentsToSeat;
-        if (availableStudents.size() > roomCapacity) {
-            studentsToSeat = availableStudents.subList(0, roomCapacity);
-        } else {
-            studentsToSeat = availableStudents;
+        // --- NEW LOGIC: Fair "Round-Robin" Selection by Major ---
+
+        // 1. Group the students by their major
+        Map<String, List<Student>> studentsByMajor = new HashMap<>();
+        for (Student s : availableStudents) {
+            studentsByMajor.computeIfAbsent(s.getMajorId(), k -> new ArrayList<>()).add(s);
         }
+
+        List<Student> studentsToSeat = new ArrayList<>();
+
+        // 2. Pick one student from each major in a loop until the room is full
+        boolean studentsAdded = true;
+        while (studentsToSeat.size() < roomCapacity && studentsAdded) {
+            studentsAdded = false; // Reset for this round
+
+            for (List<Student> majorList : studentsByMajor.values()) {
+                // If this major still has students, and the room isn't full yet
+                if (!majorList.isEmpty() && studentsToSeat.size() < roomCapacity) {
+                    studentsToSeat.add(majorList.remove(0)); // Take the first student and remove from pool
+                    studentsAdded = true; // We successfully added at least one student this round
+                }
+            }
+        }
+        // --- END OF NEW LOGIC ---
 
         // Initialize Population
         List<Individual> population = new ArrayList<>();
