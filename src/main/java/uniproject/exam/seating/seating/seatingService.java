@@ -422,4 +422,9 @@ public class seatingService {
         newStudent.setSeated(true);
         studentRepo.save(newStudent);
     }
+
+    public void addSeatingPlan(Seating  seating) {
+        seatingRepo.save(seating);
+    }
+
 }
