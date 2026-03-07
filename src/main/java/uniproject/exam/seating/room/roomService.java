@@ -19,7 +19,7 @@ public class roomService {
 
     public void addRoom(Room room) {
         int calculatedTotal = room.getRowCapacity() * room.getColumnCapacity();
-        room.setRowCapacity(calculatedTotal);
+        room.setTotalCapacity(calculatedTotal);
         roomRepository.save(room);
     }
 
