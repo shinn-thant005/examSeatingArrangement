@@ -33,5 +33,4 @@ public class roomService {
         Room room = new Room(roomId, floor, roomName, rowCapacity * columnCapacity, rowCapacity, columnCapacity);
         roomRepository.save(room);
     }
-
 }

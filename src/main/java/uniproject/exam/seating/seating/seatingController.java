@@ -45,8 +45,8 @@ public class seatingController {
     }
 
     @PostMapping("add-plan")
-    public String addPlan(@RequestBody Seating newSeating) {
-        seatingService.addSeatingPlan(newSeating);
+    public String addPlan(@RequestBody updateSeatingRequest newSeating) {
+        seatingService.addSeatingPlan(newSeating.getRollNo(), newSeating.getRoomName(), newSeating.getRowNum(), newSeating.getColumnNum());
         return "New seating plan has been added!";
     }
 }

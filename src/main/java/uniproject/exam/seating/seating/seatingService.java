@@ -423,8 +423,39 @@ public class seatingService {
         studentRepo.save(newStudent);
     }
 
-    public void addSeatingPlan(Seating  seating) {
-        seatingRepo.save(seating);
-    }
+    public void addSeatingPlan(String rollNo, String roomName, Integer  rowNum, Integer columnNum) {
+        Student student = studentRepo.findById(rollNo)
+                .orElseThrow(() -> new RuntimeException("Student not found with Roll No: " + rollNo));
 
+        Room room = roomRepo.findByRoomName(roomName)
+                .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
+
+        if (student.isSeated()) {
+            throw new IllegalStateException("Student " + rollNo + " is already seated.");
+        }
+
+        if (columnNum < 0 || columnNum >= room.getColumnCapacity() ||
+                rowNum < 0 || rowNum >= room.getRoomId()) {
+            throw new IllegalArgumentException("Position (" + rowNum + ", " + columnNum +
+                    ") is out of bounds. Room '" + roomName + "' dimensions are " +
+                    room.getRowCapacity() + "x" + room.getColumnCapacity() + ".");
+        }
+
+        Optional<Seating> occupant = seatingRepo.findByRoom_RoomIdAndRowNumAndColumnNum(room.getRoomId(), rowNum, columnNum);
+        if (occupant.isPresent()) {
+            throw new IllegalStateException("The seat at row " + rowNum + ", column " + columnNum +
+                    " in " + roomName + " is already occupied by student " + occupant.get().getStudent().getRollNo());
+        }
+
+        Seating newSeating = new Seating();
+        newSeating.setStudent(student);
+        newSeating.setRoom(room);
+        newSeating.setRowNum(rowNum);
+        newSeating.setColumnNum(columnNum);
+        seatingRepo.save(newSeating);
+
+        student.setSeated(true);
+        student.setAssignedRoom(room);
+        studentRepo.save(student);
+    }
 }
