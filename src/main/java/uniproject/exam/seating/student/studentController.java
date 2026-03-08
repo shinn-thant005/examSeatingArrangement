@@ -48,9 +48,5 @@ public class studentController {
         studentService.resetRoomSelection(roomId);
         return "Assignments for Room ID " + roomId + " have been cleared.";
     }
-
-
-
-
 }
 

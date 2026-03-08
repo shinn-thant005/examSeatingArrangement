@@ -435,7 +435,7 @@ public class seatingService {
         }
 
         if (columnNum < 0 || columnNum >= room.getColumnCapacity() ||
-                rowNum < 0 || rowNum >= room.getRoomId()) {
+                rowNum < 0 || rowNum >= room.getRowCapacity()) {
             throw new IllegalArgumentException("Position (" + rowNum + ", " + columnNum +
                     ") is out of bounds. Room '" + roomName + "' dimensions are " +
                     room.getRowCapacity() + "x" + room.getColumnCapacity() + ".");
