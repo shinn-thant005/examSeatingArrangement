@@ -37,8 +37,8 @@ public class roomService {
 
     }
 
-    public void updateRoomById(Integer roomId, Integer floor, String roomName, Integer rowCapacity, Integer columnCapacity) {
-        Room room = new Room(roomId, floor, roomName, rowCapacity * columnCapacity, rowCapacity, columnCapacity);
+    public void updateRoomById(Integer roomId, Integer floor, String roomName, Integer rowCapacity, Integer columnCapacity, Integer numOfInvigilators, Integer maxMajor) {
+        Room room = new Room(roomId, floor, roomName, rowCapacity * columnCapacity, rowCapacity, columnCapacity,  numOfInvigilators, maxMajor);
         roomRepository.save(room);
     }
 }

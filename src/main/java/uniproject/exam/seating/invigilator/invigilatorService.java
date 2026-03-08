@@ -16,8 +16,7 @@ public class invigilatorService {
         return invigilatorRepository.findAll();
     }
 
-    public void addInvigilator(Integer id, String name, String department) {
-        invigilator invigilator = new invigilator(id, name, department);
+    public void addInvigilator(invigilator invigilator) {
         invigilatorRepository.save(invigilator);
     }
 

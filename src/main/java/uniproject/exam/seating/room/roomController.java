@@ -32,7 +32,7 @@ public class roomController {
 
     @PutMapping("/update-room/{roomId}")
     public String updateRoom(@PathVariable Integer roomId, @RequestBody Room room) {
-        roomService.updateRoomById(roomId, room.getFloor(), room.getRoomName(), room.getColumnCapacity(), room.getRowCapacity());
+        roomService.updateRoomById(roomId, room.getFloor(), room.getRoomName(), room.getColumnCapacity(), room.getRowCapacity(), room.getNumOfInvigilators(), room.getMaxMajor());
     return "Room has been updated";
     }
 

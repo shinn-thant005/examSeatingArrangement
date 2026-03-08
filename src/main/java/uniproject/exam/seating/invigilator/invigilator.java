@@ -12,9 +12,24 @@ public class invigilator {
     private Integer invigilatorId;
 
     private String invigilatorName;
+
+    public enum InvigilatorRank {
+        CHIEF, SENIOR, ASSISTANT
+    }
+
+    public InvigilatorRank InvigilatorRank;
+
     private String department;
 
     public invigilator() {}
+
+    public InvigilatorRank getInvigilatorRank() {
+        return InvigilatorRank;
+    }
+
+    public void setInvigilatorRank(InvigilatorRank invigilatorRank) {
+        InvigilatorRank = invigilatorRank;
+    }
 
     public invigilator(Integer invigilatorId, String invigilatorName, String department) {
         this.invigilatorId = invigilatorId;

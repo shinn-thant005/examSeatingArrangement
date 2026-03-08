@@ -1,6 +1,8 @@
 package uniproject.exam.seating.room;
 
 import jakarta.persistence.*;
+import jakarta.validation.Constraint;
+import jakarta.validation.constraints.Min;
 import org.springframework.stereotype.Controller;
 
 @Entity
@@ -17,18 +19,23 @@ public class Room {
     private Integer rowCapacity;
     private Integer columnCapacity;
 
-    public Room(Integer roomId, Integer floor, String roomName, Integer totalCapacity, Integer rowCapacity, Integer columnCapacity) {
+    @Min(value = 3)
+    private Integer numOfInvigilators;
+
+    private Integer maxMajor;
+
+    public Room(Integer roomId, Integer floor, String roomName, Integer totalCapacity, Integer rowCapacity, Integer columnCapacity, Integer numOfInvigilators, Integer maxMajor) {
         this.roomId = roomId;
         this.floor = floor;
         this.roomName = roomName;
         this.totalCapacity = totalCapacity;
         this.rowCapacity = rowCapacity;
         this.columnCapacity = columnCapacity;
+        this.numOfInvigilators = numOfInvigilators;
+        this.maxMajor = maxMajor;
     }
 
-    public Room() {
-
-    }
+    public Room() {}
 
     public Integer getRoomId() {
         return roomId;
@@ -64,6 +71,22 @@ public class Room {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public Integer getNumOfInvigilators() {
+        return numOfInvigilators;
+    }
+
+    public void setNumOfInvigilators(Integer numOfInvigilators) {
+        this.numOfInvigilators = numOfInvigilators;
+    }
+
+    public Integer getMaxMajor() {
+        return maxMajor;
+    }
+
+    public void setMaxMajor(Integer maxMajor) {
+        this.maxMajor = maxMajor;
     }
 
     public void setTotalCapacity(Integer totalCapacity) {

@@ -20,7 +20,7 @@ public class invigilatorController {
 
     @PostMapping("/add-invigilator")
     public String addInvigilator(@RequestBody invigilator invigilator) {
-        invigilatorService.addInvigilator(invigilator.getInvigilatorId(), invigilator.getInvigilatorName(), invigilator.getDepartment());
+        invigilatorService.addInvigilator(invigilator);
         return "New invigilator added successfully.";
     }
 
