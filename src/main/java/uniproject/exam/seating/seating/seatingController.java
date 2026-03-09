@@ -1,20 +1,30 @@
 package uniproject.exam.seating.seating;
 
 import org.springframework.web.bind.annotation.*;
+import uniproject.exam.seating.room.Room;
+import uniproject.exam.seating.room.roomService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/seating")
 public class seatingController {
     seatingService seatingService;
+    roomService roomService;
 
-    public seatingController(seatingService seatingService) {
+    public seatingController(seatingService seatingService,  roomService roomService) {
         this.seatingService = seatingService;
+        this.roomService = roomService;
     }
-
 
     @GetMapping("/generate-plan/{roomId}")
     public seatingService.SeatingPlanResponse generatePlan(@PathVariable Integer roomId) {
         return seatingService.generateSeatingPlan(roomId);
+    }
+
+    @GetMapping("/list-seating-rooms")
+    public List<Room> showSeatingRooms() {
+        return roomService.getAllRooms();
     }
 
     @GetMapping("/view-plan/{roomID}")
