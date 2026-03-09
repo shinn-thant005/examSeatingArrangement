@@ -1,12 +1,15 @@
 package uniproject.exam.seating.student;
 
 import org.springframework.stereotype.Service;
+import uniproject.exam.seating.seating.seatingRepository;
+
 import java.util.List;
 
 
 @Service
 public class studentService {
     private studentRepository studentRepository;
+    private seatingRepository seatingRepository;
 
     public studentService(studentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -22,6 +25,7 @@ public class studentService {
     }
 
     public void deleteStudentByRollNo(String RollNo) {
+        seatingRepository.deleteByStudent_RollNo(RollNo);
         studentRepository.deleteById(RollNo);
     }
 

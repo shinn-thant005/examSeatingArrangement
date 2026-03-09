@@ -4,8 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import uniproject.exam.seating.room.Room;
-import uniproject.exam.seating.student.Student;
 
 import java.beans.Transient;
 import java.util.List;
@@ -29,4 +27,5 @@ public interface seatingRepository extends JpaRepository<Seating, Integer> {
 
     Optional<Seating> findByRoom_RoomIdAndRowNumAndColumnNum(Integer roomId, Integer rowNum, Integer columnNum);
 
+    void deleteByStudent_RollNo(String rollNo);
 }
