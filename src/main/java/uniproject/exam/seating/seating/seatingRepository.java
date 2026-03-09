@@ -27,5 +27,6 @@ public interface seatingRepository extends JpaRepository<Seating, Integer> {
 
     Optional<Seating> findByRoom_RoomIdAndRowNumAndColumnNum(Integer roomId, Integer rowNum, Integer columnNum);
 
+    @Transactional
     void deleteByStudent_RollNo(String rollNo);
 }

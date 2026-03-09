@@ -11,8 +11,9 @@ public class studentService {
     private studentRepository studentRepository;
     private seatingRepository seatingRepository;
 
-    public studentService(studentRepository studentRepository) {
+    public studentService(studentRepository studentRepository, seatingRepository seatingRepository) {
         this.studentRepository = studentRepository;
+        this.seatingRepository = seatingRepository;
     }
 
     public List<Student> findAllStudent() {
