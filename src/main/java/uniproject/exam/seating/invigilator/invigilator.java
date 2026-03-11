@@ -1,9 +1,6 @@
 package uniproject.exam.seating.invigilator;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class invigilator {
@@ -17,6 +14,7 @@ public class invigilator {
         CHIEF, SENIOR, ASSISTANT
     }
 
+    @Enumerated(EnumType.STRING)
     public InvigilatorRank InvigilatorRank;
 
     private String department;
