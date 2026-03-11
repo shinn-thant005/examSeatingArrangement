@@ -1,15 +1,14 @@
 package uniproject.exam.seating.exam;
 
 import jakarta.persistence.*;
-import uniproject.exam.seating.room.Room;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "exam", uniqueConstraints = {
         @UniqueConstraint(
-                name = "uk_sub_date_time_room",
-                columnNames = {"subject", "examDate", "examTime", "room"}
+                name = "uk_sub_date_time",
+                columnNames = {"subject", "examDate", "examTime"}
         )
 })
 public class Exam {
@@ -27,18 +26,14 @@ public class Exam {
     private LocalDate examDate;
     private TimeOfDay examTime;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
-
     public Exam() {
     }
 
-    public Exam(String subject, LocalDate examDate, TimeOfDay examTime, Room room) {
+    public Exam(Integer examId, String subject, LocalDate examDate, TimeOfDay examTime) {
+        this.examId = examId;
         this.subject = subject;
         this.examDate = examDate;
         this.examTime = examTime;
-        this.room = room;
     }
 
     public Integer getExamId() {
@@ -69,15 +64,8 @@ public class Exam {
         return examTime;
     }
 
-    public void setTime(TimeOfDay examTime) {
+    public void setExamTime(TimeOfDay examTime) {
         this.examTime = examTime;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
 }

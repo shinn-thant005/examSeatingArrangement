@@ -14,7 +14,7 @@ import uniproject.exam.seating.student.Student;
 public class Seating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer SeatingId;
+    private Integer seatingId;
 
     @OneToOne
     @JoinColumn(name = "rollNo")
@@ -30,7 +30,7 @@ public class Seating {
     public Seating() {}
 
     public Seating(Integer seatingId, Student student, Room room, Integer rowNum, Integer columnNum) {
-        SeatingId = seatingId;
+        this.seatingId = seatingId;
         this.student = student;
         this.room = room;
         this.rowNum = rowNum;
@@ -38,7 +38,7 @@ public class Seating {
     }
 
     public Integer getSeatingId() {
-        return SeatingId;
+        return seatingId;
     }
 
     public Student getStudent() {
@@ -58,7 +58,7 @@ public class Seating {
     }
 
     public void setSeatingId(Integer seatingId) {
-        SeatingId = seatingId;
+        seatingId = seatingId;
     }
 
     public void setStudent(Student student) {
