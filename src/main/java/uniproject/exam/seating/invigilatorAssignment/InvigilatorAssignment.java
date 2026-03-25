@@ -6,7 +6,7 @@ import uniproject.exam.seating.invigilator.invigilator;
 import uniproject.exam.seating.room.Room;
 
 @Entity
-public class invigilatorAssignment {
+public class InvigilatorAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int AssignmentId;
@@ -23,9 +23,9 @@ public class invigilatorAssignment {
     @JoinColumn(name = "invigilatorId", nullable = false)
     private invigilator invigilator;
 
-    public invigilatorAssignment() {}
+    public InvigilatorAssignment() {}
 
-    public invigilatorAssignment(Exam exam, Room room, invigilator invigilator) {
+    public InvigilatorAssignment(Exam exam, Room room, invigilator invigilator) {
         this.exam = exam;
         this.room = room;
         this.invigilator = invigilator;
