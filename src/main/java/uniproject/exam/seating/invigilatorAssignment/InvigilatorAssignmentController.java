@@ -19,8 +19,4 @@ public class InvigilatorAssignmentController {
         return invigilatorAssignmentService.getAllAssignment();
     }
 
-    @GetMapping("/generate-assignment-plan")
-    public  List<InvigilatorAssignment> generateAssignmentPlan() {
-        return invigilatorAssignmentService.generateAssignment();
-    }
 }

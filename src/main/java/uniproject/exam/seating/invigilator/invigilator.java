@@ -15,7 +15,7 @@ public class invigilator {
     }
 
     @Enumerated(EnumType.STRING)
-    public InvigilatorRank InvigilatorRank;
+    public static InvigilatorRank InvigilatorRank;
 
     private String department;
 
