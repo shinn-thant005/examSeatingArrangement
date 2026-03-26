@@ -32,7 +32,7 @@ public class invigilatorController {
 
     @PutMapping("/update-invigilator/{invigilatorId}")
     public String updateInvigilator(@PathVariable Integer invigilatorId, @RequestBody invigilator invigilator) {
-        invigilatorService.updateInvigilator(invigilatorId,  invigilator.getInvigilatorName(), invigilator.getDepartment());
+        invigilatorService.updateInvigilator(invigilatorId,  invigilator.getInvigilatorName(), invigilator.getDepartment(), invigilator.getRank());
         return "Updated invigilator with id " + invigilatorId;
     }
 

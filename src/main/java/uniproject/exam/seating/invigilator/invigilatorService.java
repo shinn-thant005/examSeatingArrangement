@@ -26,8 +26,8 @@ public class invigilatorService {
         }
     }
 
-    public void updateInvigilator(Integer id, String name, String department) {
-        invigilator invigilator = new invigilator(id, name, department);
+    public void updateInvigilator(Integer id, String name, String department, invigilator.invigilatorRank rank) {
+        invigilator invigilator = new invigilator(id, name, department, rank);
         invigilatorRepository.save(invigilator);
     }
 }

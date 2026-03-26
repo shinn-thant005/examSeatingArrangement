@@ -15,25 +15,25 @@ public class invigilator {
     }
 
     @Enumerated(EnumType.STRING)
-    public static invigilatorRank rank;
+    public invigilatorRank rank;
 
     private String department;
 
     public invigilator() {}
 
-    public invigilatorRank getInvigilatorRank() {
+    public invigilatorRank getRank() {
         return rank;
     }
 
-    public void setInvigilatorRank(invigilatorRank invigilatorRank) {
-        invigilator.rank = invigilatorRank;
+    public void setRank(invigilatorRank rank) {
+        this.rank = rank;
     }
 
-    public invigilator(Integer invigilatorId, String invigilatorName, String department, invigilatorRank invigilatorRank) {
+    public invigilator(Integer invigilatorId, String invigilatorName, String department, invigilatorRank rank) {
         this.invigilatorId = invigilatorId;
         this.invigilatorName = invigilatorName;
         this.department = department;
-        this.rank = invigilatorRank;
+        this.rank = rank;
     }
 
     public Integer getInvigilatorId() {

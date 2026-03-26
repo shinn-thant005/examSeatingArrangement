@@ -76,15 +76,15 @@ public class InvigilatorAssignmentService {
 
             // Step 1: Assign 1 CHIEF
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.rank.CHIEF, requiredCapacity);
+                    invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
             // Step 2: Assign 1 SENIOR
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.rank.SENIOR, requiredCapacity);
+                    invigilator.invigilatorRank.SENIOR, requiredCapacity);
 
             // Step 3: Assign 1 ASSISTANT
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.rank.ASSISTANT, requiredCapacity);
+                    invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
 
             // Step 4: Fill remaining seats with anyone valid (Fallback if capacity > 3)
             Iterator<invigilator> it = availableInvigilators.iterator();
@@ -115,7 +115,7 @@ public class InvigilatorAssignmentService {
         while (it.hasNext() && roomAssigned.size() < roomCapacity) {
             invigilator inv = it.next();
             // Using your updated InvigilatorRank enum
-            if (inv.getInvigilatorRank() == targetRank && canAssign(inv, studentMajors, roomAssigned)) {
+            if (inv.getRank() == targetRank && canAssign(inv, studentMajors, roomAssigned)) {
                 roomAssigned.add(inv);
                 it.remove(); // Remove from the available pool so they aren't double-booked during this Exam
                 break; // Only assign ONE of this specific rank in this step
@@ -130,9 +130,9 @@ public class InvigilatorAssignmentService {
         }
 
         // Rule 2: Chain of Command (Only one CHIEF allowed per room)
-        if (inv.getInvigilatorRank() == invigilator.rank.CHIEF) {
+        if (inv.getRank() == invigilator.invigilatorRank.CHIEF) {
             for (invigilator i : assigned) {
-                if (i.getInvigilatorRank() == invigilator.rank.CHIEF) {
+                if (i.getRank() == invigilator.invigilatorRank.CHIEF) {
                     return false;
                 }
             }
