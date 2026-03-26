@@ -13,6 +13,7 @@ import java.time.LocalDate;
 })
 public class Exam {
 
+
     public enum TimeOfDay {
         MORNING, AFTERNOON
     }
@@ -24,6 +25,9 @@ public class Exam {
     private String subject;
 
     private LocalDate examDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exam_time")
     private TimeOfDay examTime;
 
     public Exam() {

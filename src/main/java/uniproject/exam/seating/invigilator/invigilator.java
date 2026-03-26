@@ -15,6 +15,7 @@ public class invigilator {
     }
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "invigilator_rank")
     public invigilatorRank rank;
 
     private String department;
