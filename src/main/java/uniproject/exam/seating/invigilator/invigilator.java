@@ -10,23 +10,23 @@ public class invigilator {
 
     private String invigilatorName;
 
-    public enum InvigilatorRank {
+    public enum invigilatorRank {
         CHIEF, SENIOR, ASSISTANT
     }
 
     @Enumerated(EnumType.STRING)
-    public static InvigilatorRank InvigilatorRank;
+    public static invigilatorRank invigilatorRank;
 
     private String department;
 
     public invigilator() {}
 
-    public InvigilatorRank getInvigilatorRank() {
-        return InvigilatorRank;
+    public invigilatorRank getInvigilatorRank() {
+        return invigilatorRank;
     }
 
-    public void setInvigilatorRank(InvigilatorRank invigilatorRank) {
-        InvigilatorRank = invigilatorRank;
+    public void setInvigilatorRank(invigilatorRank invigilatorRank) {
+        invigilator.invigilatorRank = invigilatorRank;
     }
 
     public invigilator(Integer invigilatorId, String invigilatorName, String department) {

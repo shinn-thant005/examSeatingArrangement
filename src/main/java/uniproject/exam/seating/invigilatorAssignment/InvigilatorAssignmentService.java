@@ -76,15 +76,15 @@ public class InvigilatorAssignmentService {
 
             // Step 1: Assign 1 CHIEF
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.InvigilatorRank.CHIEF, requiredCapacity);
+                    invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
             // Step 2: Assign 1 SENIOR
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.InvigilatorRank.SENIOR, requiredCapacity);
+                    invigilator.invigilatorRank.SENIOR, requiredCapacity);
 
             // Step 3: Assign 1 ASSISTANT
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.InvigilatorRank.ASSISTANT, requiredCapacity);
+                    invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
 
             // Step 4: Fill remaining seats with anyone valid (Fallback if capacity > 3)
             Iterator<invigilator> it = availableInvigilators.iterator();
@@ -109,7 +109,7 @@ public class InvigilatorAssignmentService {
     // --- HELPER METHODS FOR THE ALGORITHM ---
 
     private void assignSpecificRank(List<invigilator> availablePool, List<invigilator> roomAssigned,
-                                    Set<String> studentMajors, invigilator.InvigilatorRank targetRank,
+                                    Set<String> studentMajors, invigilator.invigilatorRank targetRank,
                                     int roomCapacity) {
         Iterator<invigilator> it = availablePool.iterator();
         while (it.hasNext() && roomAssigned.size() < roomCapacity) {
@@ -130,9 +130,9 @@ public class InvigilatorAssignmentService {
         }
 
         // Rule 2: Chain of Command (Only one CHIEF allowed per room)
-        if (inv.getInvigilatorRank() == invigilator.InvigilatorRank.CHIEF) {
+        if (inv.getInvigilatorRank() == invigilator.invigilatorRank.CHIEF) {
             for (invigilator i : assigned) {
-                if (i.getInvigilatorRank() == invigilator.InvigilatorRank.CHIEF) {
+                if (i.getInvigilatorRank() == invigilator.invigilatorRank.CHIEF) {
                     return false;
                 }
             }

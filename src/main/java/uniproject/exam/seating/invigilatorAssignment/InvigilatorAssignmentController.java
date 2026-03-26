@@ -20,7 +20,6 @@ public class InvigilatorAssignmentController {
 
     @PostMapping("/generate-assignment/{examId}")
     public String generateAssignmentPlan(@PathVariable Integer examId) {
-        // Calls the Genetic Algorithm in your service
         invigilatorAssignmentService.generateAssignment(examId);
 
         return "Invigilator assignments have been successfully generated for Exam ID: " + examId;
