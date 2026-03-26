@@ -76,15 +76,15 @@ public class InvigilatorAssignmentService {
 
             // Step 1: Assign 1 CHIEF
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.invigilatorRank.CHIEF, requiredCapacity);
+                    invigilator.rank.CHIEF, requiredCapacity);
 
             // Step 2: Assign 1 SENIOR
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.invigilatorRank.SENIOR, requiredCapacity);
+                    invigilator.rank.SENIOR, requiredCapacity);
 
             // Step 3: Assign 1 ASSISTANT
             assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
-                    invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
+                    invigilator.rank.ASSISTANT, requiredCapacity);
 
             // Step 4: Fill remaining seats with anyone valid (Fallback if capacity > 3)
             Iterator<invigilator> it = availableInvigilators.iterator();
@@ -130,9 +130,9 @@ public class InvigilatorAssignmentService {
         }
 
         // Rule 2: Chain of Command (Only one CHIEF allowed per room)
-        if (inv.getInvigilatorRank() == invigilator.invigilatorRank.CHIEF) {
+        if (inv.getInvigilatorRank() == invigilator.rank.CHIEF) {
             for (invigilator i : assigned) {
-                if (i.getInvigilatorRank() == invigilator.invigilatorRank.CHIEF) {
+                if (i.getInvigilatorRank() == invigilator.rank.CHIEF) {
                     return false;
                 }
             }
