@@ -40,23 +40,19 @@ public class InvigilatorAssignmentService {
 
     @Transactional
     public void generateAssignment(Integer examId) {
-        // 1. Fetch the Exam Session
         Exam exam = examRepo.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Exam not found!"));
 
-        // 2. Clear previous assignments
         assignmentRepo.deleteByExam_ExamId(examId);
         assignmentRepo.flush();
 
-        // 3. Fetch Rooms and Shuffle Invigilators
         List<Room> allRooms = roomRepo.findAll();
         List<invigilator> availableInvigilators = new ArrayList<>(invigilatorRepo.findAll());
         Collections.shuffle(availableInvigilators);
 
         List<InvigilatorAssignment> newAssignments = new ArrayList<>();
-        String targetMajor = exam.getTargetMajor(); // The major taking the exam
+        String targetMajor = exam.getTargetMajor();
 
-        // 4. Loop through every room
         for (Room room : allRooms) {
             int requiredCapacity = room.getNumOfInvigilators() != null ? room.getNumOfInvigilators() : 0;
             if (requiredCapacity == 0) continue;
@@ -64,41 +60,48 @@ public class InvigilatorAssignmentService {
             List<Seating> roomSeats = seatingRepo.findByRoom_RoomId(room.getRoomId());
             if (roomSeats.isEmpty()) continue;
 
-            // Check if this specific exam is actually happening in this room
+            // --- THE MIXED ROOM FIX ---
             boolean isExamHappeningInRoom = false;
+            Set<String> allStudentMajorsInRoom = new HashSet<>();
+
             for (Seating seat : roomSeats) {
-                if (seat.getStudent() != null && targetMajor.equals(seat.getStudent().getMajorId())) {
-                    isExamHappeningInRoom = true;
-                    break; // Found one student taking this exam, so we need staff here
+                if (seat.getStudent() != null) {
+                    String stuMajor = seat.getStudent().getMajorId();
+
+                    // 1. Collect EVERY major currently sitting in this room (The Shield)
+                    allStudentMajorsInRoom.add(stuMajor);
+
+                    // 2. Check if the exam we are scheduling is actually happening here (The Trigger)
+                    if (targetMajor.equals(stuMajor)) {
+                        isExamHappeningInRoom = true;
+                    }
                 }
             }
 
-            // Skip if no students are taking this exam in this room
+            // If none of the students in this room are taking this exam, skip it.
             if (!isExamHappeningInRoom) continue;
 
             List<invigilator> assignedToThisRoom = new ArrayList<>();
 
-            // Step 1-3: Assign Ranks. We pass targetMajor so it can block matching invigilators!
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
+            // We pass the Set of ALL majors in the room to the helper methods now!
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
                     invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
                     invigilator.invigilatorRank.SENIOR, requiredCapacity);
 
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
                     invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
 
-            // Step 4: Fallback loop
             Iterator<invigilator> it = availableInvigilators.iterator();
             while (it.hasNext() && assignedToThisRoom.size() < requiredCapacity) {
                 invigilator inv = it.next();
-                if (canAssign(inv, targetMajor, assignedToThisRoom)) {
+                if (canAssign(inv, allStudentMajorsInRoom, assignedToThisRoom)) {
                     assignedToThisRoom.add(inv);
                     it.remove();
                 }
             }
 
-            // Map and Save
             for (invigilator inv : assignedToThisRoom) {
                 newAssignments.add(new InvigilatorAssignment(exam, room, inv));
             }
@@ -110,12 +113,12 @@ public class InvigilatorAssignmentService {
     // --- HELPER METHODS ---
 
     private void assignSpecificRank(List<invigilator> availablePool, List<invigilator> roomAssigned,
-                                    String targetMajor, invigilator.invigilatorRank targetRank,
+                                    Set<String> studentMajorsInRoom, invigilator.invigilatorRank targetRank,
                                     int roomCapacity) {
         Iterator<invigilator> it = availablePool.iterator();
         while (it.hasNext() && roomAssigned.size() < roomCapacity) {
             invigilator inv = it.next();
-            if (inv.getRank() == targetRank && canAssign(inv, targetMajor, roomAssigned)) {
+            if (inv.getRank() == targetRank && canAssign(inv, studentMajorsInRoom, roomAssigned)) {
                 roomAssigned.add(inv);
                 it.remove();
                 break;
@@ -123,13 +126,13 @@ public class InvigilatorAssignmentService {
         }
     }
 
-    private boolean canAssign(invigilator inv, String targetMajor, List<invigilator> assigned) {
-        // Rule 1: THE ANTI-CHEATING FIX (Invigilator's department MUST NOT match the Exam's major)
-        if (targetMajor.equals(inv.getDepartment())) {
+    private boolean canAssign(invigilator inv, Set<String> studentMajorsInRoom, List<invigilator> assigned) {
+        // Rule 1: THE IRONCLAD SHIELD (If the invigilator's department matches ANY student in the room, BLOCK THEM)
+        if (studentMajorsInRoom.contains(inv.getDepartment())) {
             return false;
         }
 
-        // Rule 2: Chain of Command (Only one CHIEF allowed per room)
+        // Rule 2: Chain of Command
         if (inv.getRank() == invigilator.invigilatorRank.CHIEF) {
             for (invigilator i : assigned) {
                 if (i.getRank() == invigilator.invigilatorRank.CHIEF) {
