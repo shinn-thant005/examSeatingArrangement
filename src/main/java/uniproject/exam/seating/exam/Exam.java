@@ -13,7 +13,6 @@ import java.time.LocalDate;
 })
 public class Exam {
 
-
     public enum TimeOfDay {
         MORNING, AFTERNOON
     }
@@ -30,14 +29,25 @@ public class Exam {
     @Column(name = "exam_time")
     private TimeOfDay examTime;
 
+    private String targetMajor;
+
     public Exam() {
     }
 
-    public Exam(Integer examId, String subject, LocalDate examDate, TimeOfDay examTime) {
+    public Exam(Integer examId, String subject, LocalDate examDate, TimeOfDay examTime, String targetMajor) {
         this.examId = examId;
         this.subject = subject;
         this.examDate = examDate;
         this.examTime = examTime;
+        this.targetMajor = targetMajor;
+    }
+
+    public String getTargetMajor() {
+        return targetMajor;
+    }
+
+    public void setTargetMajor(String targetMajor) {
+        this.targetMajor = targetMajor;
     }
 
     public Integer getExamId() {

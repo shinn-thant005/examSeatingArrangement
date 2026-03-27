@@ -44,88 +44,88 @@ public class InvigilatorAssignmentService {
         Exam exam = examRepo.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Exam not found!"));
 
-        // 2. Clear previous assignments for this specific exam (Allows safe re-generation)
+        // 2. Clear previous assignments
         assignmentRepo.deleteByExam_ExamId(examId);
         assignmentRepo.flush();
 
-        // 3. Fetch all active Rooms and shuffle all available Invigilators
+        // 3. Fetch Rooms and Shuffle Invigilators
         List<Room> allRooms = roomRepo.findAll();
         List<invigilator> availableInvigilators = new ArrayList<>(invigilatorRepo.findAll());
-        Collections.shuffle(availableInvigilators); // Ensures fair, random distribution
+        Collections.shuffle(availableInvigilators);
 
         List<InvigilatorAssignment> newAssignments = new ArrayList<>();
+        String targetMajor = exam.getTargetMajor(); // The major taking the exam
 
-        // 4. Loop through every room to assign staff
+        // 4. Loop through every room
         for (Room room : allRooms) {
-            // Get how many invigilators this room needs (from your updated Room entity)
             int requiredCapacity = room.getNumOfInvigilators() != null ? room.getNumOfInvigilators() : 0;
             if (requiredCapacity == 0) continue;
 
-            // Find all unique student majors currently seated in this room
             List<Seating> roomSeats = seatingRepo.findByRoom_RoomId(room.getRoomId());
-            if (roomSeats.isEmpty()) continue; // Skip empty rooms
+            if (roomSeats.isEmpty()) continue;
 
-            Set<String> studentMajorsInRoom = new HashSet<>();
+            // Check if this specific exam is actually happening in this room
+            boolean isExamHappeningInRoom = false;
             for (Seating seat : roomSeats) {
-                if (seat.getStudent() != null) {
-                    studentMajorsInRoom.add(seat.getStudent().getMajorId());
+                if (seat.getStudent() != null && targetMajor.equals(seat.getStudent().getMajorId())) {
+                    isExamHappeningInRoom = true;
+                    break; // Found one student taking this exam, so we need staff here
                 }
             }
 
+            // Skip if no students are taking this exam in this room
+            if (!isExamHappeningInRoom) continue;
+
             List<invigilator> assignedToThisRoom = new ArrayList<>();
 
-            // Step 1: Assign 1 CHIEF
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
+            // Step 1-3: Assign Ranks. We pass targetMajor so it can block matching invigilators!
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
                     invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
-            // Step 2: Assign 1 SENIOR
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
                     invigilator.invigilatorRank.SENIOR, requiredCapacity);
 
-            // Step 3: Assign 1 ASSISTANT
-            assignSpecificRank(availableInvigilators, assignedToThisRoom, studentMajorsInRoom,
+            assignSpecificRank(availableInvigilators, assignedToThisRoom, targetMajor,
                     invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
 
-            // Step 4: Fill remaining seats with anyone valid (Fallback if capacity > 3)
+            // Step 4: Fallback loop
             Iterator<invigilator> it = availableInvigilators.iterator();
             while (it.hasNext() && assignedToThisRoom.size() < requiredCapacity) {
                 invigilator inv = it.next();
-                if (canAssign(inv, studentMajorsInRoom, assignedToThisRoom)) {
+                if (canAssign(inv, targetMajor, assignedToThisRoom)) {
                     assignedToThisRoom.add(inv);
                     it.remove();
                 }
             }
 
-            // Map the successful assignments to our Entity
+            // Map and Save
             for (invigilator inv : assignedToThisRoom) {
                 newAssignments.add(new InvigilatorAssignment(exam, room, inv));
             }
         }
 
-        // 5. Bulk save all assignments to the database
         assignmentRepo.saveAll(newAssignments);
     }
 
-    // --- HELPER METHODS FOR THE ALGORITHM ---
+    // --- HELPER METHODS ---
 
     private void assignSpecificRank(List<invigilator> availablePool, List<invigilator> roomAssigned,
-                                    Set<String> studentMajors, invigilator.invigilatorRank targetRank,
+                                    String targetMajor, invigilator.invigilatorRank targetRank,
                                     int roomCapacity) {
         Iterator<invigilator> it = availablePool.iterator();
         while (it.hasNext() && roomAssigned.size() < roomCapacity) {
             invigilator inv = it.next();
-            // Using your updated InvigilatorRank enum
-            if (inv.getRank() == targetRank && canAssign(inv, studentMajors, roomAssigned)) {
+            if (inv.getRank() == targetRank && canAssign(inv, targetMajor, roomAssigned)) {
                 roomAssigned.add(inv);
-                it.remove(); // Remove from the available pool so they aren't double-booked during this Exam
-                break; // Only assign ONE of this specific rank in this step
+                it.remove();
+                break;
             }
         }
     }
 
-    private boolean canAssign(invigilator inv, Set<String> studentMajors, List<invigilator> assigned) {
-        // Rule 1: Anti-Cheating (Invigilator's department cannot match any student's major)
-        if (studentMajors.contains(inv.getDepartment())) {
+    private boolean canAssign(invigilator inv, String targetMajor, List<invigilator> assigned) {
+        // Rule 1: THE ANTI-CHEATING FIX (Invigilator's department MUST NOT match the Exam's major)
+        if (targetMajor.equals(inv.getDepartment())) {
             return false;
         }
 
