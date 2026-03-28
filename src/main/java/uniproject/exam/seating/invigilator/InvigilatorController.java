@@ -6,20 +6,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/invigilator")
-public class invigilatorController {
-    invigilatorService invigilatorService;
+public class InvigilatorController {
+    InvigilatorService invigilatorService;
 
-    public invigilatorController(invigilatorService invigilatorService) {
+    public InvigilatorController(InvigilatorService invigilatorService) {
         this.invigilatorService = invigilatorService;
     }
 
     @GetMapping("/list-invigilator")
-    public List<invigilator> listInvigilator() {
+    public List<Invigilator> listInvigilator() {
         return invigilatorService.findAllInvigilator();
     }
 
     @PostMapping("/add-invigilator")
-    public String addInvigilator(@RequestBody invigilator invigilator) {
+    public String addInvigilator(@RequestBody Invigilator invigilator) {
         invigilatorService.addInvigilator(invigilator);
         return "New invigilator added successfully.";
     }
@@ -31,7 +31,7 @@ public class invigilatorController {
     }
 
     @PutMapping("/update-invigilator/{invigilatorId}")
-    public String updateInvigilator(@PathVariable Integer invigilatorId, @RequestBody invigilator invigilator) {
+    public String updateInvigilator(@PathVariable Integer invigilatorId, @RequestBody Invigilator invigilator) {
         invigilatorService.updateInvigilator(invigilatorId,  invigilator.getInvigilatorName(), invigilator.getDepartment(), invigilator.getRank());
         return "Updated invigilator with id " + invigilatorId;
     }

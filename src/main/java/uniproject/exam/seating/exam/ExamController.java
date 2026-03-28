@@ -7,10 +7,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/exam")
-public class examController {
-    examService examService;
+public class ExamController {
+    ExamService examService;
 
-    public examController(examService examService) {
+    public ExamController(ExamService examService) {
         this.examService = examService;
     }
 

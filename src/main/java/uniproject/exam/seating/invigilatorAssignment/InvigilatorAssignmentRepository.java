@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uniproject.exam.seating.exam.Exam;
-import uniproject.exam.seating.invigilator.invigilator;
+import uniproject.exam.seating.invigilator.Invigilator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,11 +21,16 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
 
     @Transactional
     @Modifying
+    @Query("DELETE FROM InvigilatorAssignment ia WHERE ia. invigilator.invigilatorId = :invigilatorId")
+    void deleteAllByInvigilator_InvigilatorId(Integer invigilatorId);
+
+    @Transactional
+    @Modifying
     @Query("DELETE FROM InvigilatorAssignment ia WHERE ia.exam.examId = :examId")
     void deleteAllByExam_ExamId(Integer examId);
 
     boolean existsByInvigilatorAndExam_ExamDateAndExam_ExamTimeAndAssignmentIdNot(
-            invigilator invigilator,
+            Invigilator invigilator,
             LocalDate examDate,
             Exam.TimeOfDay examTime,
             Integer assignmentId
@@ -33,5 +38,5 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
 
     // --- NEW: Finds all invigilators busy at a specific date and time ---
     @Query("SELECT ia.invigilator FROM InvigilatorAssignment ia WHERE ia.exam.examDate = :examDate AND ia.exam.examTime = :examTime")
-    List<invigilator> findBusyInvigilators(@Param("examDate") LocalDate examDate, @Param("examTime") Exam.TimeOfDay examTime);
+    List<Invigilator> findBusyInvigilators(@Param("examDate") LocalDate examDate, @Param("examTime") Exam.TimeOfDay examTime);
 }

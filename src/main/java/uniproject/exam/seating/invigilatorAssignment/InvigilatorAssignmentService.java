@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uniproject.exam.seating.exam.Exam;
-import uniproject.exam.seating.exam.examRepository;
-import uniproject.exam.seating.invigilator.invigilator;
-import uniproject.exam.seating.invigilator.invigilatorRepository;
+import uniproject.exam.seating.exam.ExamRepository;
+import uniproject.exam.seating.invigilator.Invigilator;
+import uniproject.exam.seating.invigilator.InvigilatorRepository;
 import uniproject.exam.seating.room.Room;
-import uniproject.exam.seating.room.roomRepository;
+import uniproject.exam.seating.room.RoomRepository;
 import uniproject.exam.seating.seating.Seating;
-import uniproject.exam.seating.seating.seatingRepository;
+import uniproject.exam.seating.seating.SeatingRepository;
 
 import java.util.*;
 
@@ -19,16 +19,16 @@ import java.util.*;
 public class InvigilatorAssignmentService {
 
     private final InvigilatorAssignmentRepository assignmentRepo;
-    private final invigilatorRepository invigilatorRepo;
-    private final examRepository examRepo;
-    private final seatingRepository seatingRepo;
-    private final roomRepository roomRepo;
+    private final InvigilatorRepository invigilatorRepo;
+    private final ExamRepository examRepo;
+    private final SeatingRepository seatingRepo;
+    private final RoomRepository roomRepo;
 
     public InvigilatorAssignmentService(InvigilatorAssignmentRepository assignmentRepo,
-                                        invigilatorRepository invigilatorRepo,
-                                        examRepository examRepo,
-                                        seatingRepository seatingRepo,
-                                        roomRepository roomRepo) {
+                                        InvigilatorRepository invigilatorRepo,
+                                        ExamRepository examRepo,
+                                        SeatingRepository seatingRepo,
+                                        RoomRepository roomRepo) {
         this.assignmentRepo = assignmentRepo;
         this.invigilatorRepo = invigilatorRepo;
         this.examRepo = examRepo;
@@ -46,20 +46,20 @@ public class InvigilatorAssignmentService {
                 .orElseThrow(() -> new RuntimeException("Exam not found!"));
 
         // Clear existing assignments for THIS specific exam to avoid duplicates
-        assignmentRepo.deleteByExam_ExamId(examId);
+        assignmentRepo.deleteAllByExam_ExamId(examId);
         assignmentRepo.flush();
 
         List<Room> allRooms = roomRepo.findAll();
 
         // --- NEW DOUBLE-BOOKING PREVENTION LOGIC ---
         // 1. Get ALL invigilators in the system
-        List<invigilator> allInvigilators = invigilatorRepo.findAll();
+        List<Invigilator> allInvigilators = invigilatorRepo.findAll();
 
         // 2. Ask the database: Who is already busy at this exact Date and Time (from other exams)?
-        List<invigilator> busyInvigilators = assignmentRepo.findBusyInvigilators(exam.getExamDate(), exam.getExamTime());
+        List<Invigilator> busyInvigilators = assignmentRepo.findBusyInvigilators(exam.getExamDate(), exam.getExamTime());
 
         // 3. Create the available pool by removing the busy ones
-        List<invigilator> availableInvigilators = new ArrayList<>(allInvigilators);
+        List<Invigilator> availableInvigilators = new ArrayList<>(allInvigilators);
         availableInvigilators.removeAll(busyInvigilators);
 
         // Shuffle the remaining free invigilators
@@ -97,28 +97,28 @@ public class InvigilatorAssignmentService {
             // If none of the students in this room are taking this exam, skip it.
             if (!isExamHappeningInRoom) continue;
 
-            List<invigilator> assignedToThisRoom = new ArrayList<>();
+            List<Invigilator> assignedToThisRoom = new ArrayList<>();
 
             // We pass the Set of ALL majors in the room to the helper methods now!
             assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
-                    invigilator.invigilatorRank.CHIEF, requiredCapacity);
+                    Invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
             assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
-                    invigilator.invigilatorRank.SENIOR, requiredCapacity);
+                    Invigilator.invigilatorRank.SENIOR, requiredCapacity);
 
             assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
-                    invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
+                    Invigilator.invigilatorRank.ASSISTANT, requiredCapacity);
 
-            Iterator<invigilator> it = availableInvigilators.iterator();
+            Iterator<Invigilator> it = availableInvigilators.iterator();
             while (it.hasNext() && assignedToThisRoom.size() < requiredCapacity) {
-                invigilator inv = it.next();
+                Invigilator inv = it.next();
                 if (canAssign(inv, allStudentMajorsInRoom, assignedToThisRoom)) {
                     assignedToThisRoom.add(inv);
                     it.remove();
                 }
             }
 
-            for (invigilator inv : assignedToThisRoom) {
+            for (Invigilator inv : assignedToThisRoom) {
                 newAssignments.add(new InvigilatorAssignment(exam, room, inv));
             }
         }
@@ -128,12 +128,12 @@ public class InvigilatorAssignmentService {
 
     // --- HELPER METHODS ---
 
-    private void assignSpecificRank(List<invigilator> availablePool, List<invigilator> roomAssigned,
-                                    Set<String> studentMajorsInRoom, invigilator.invigilatorRank targetRank,
+    private void assignSpecificRank(List<Invigilator> availablePool, List<Invigilator> roomAssigned,
+                                    Set<String> studentMajorsInRoom, Invigilator.invigilatorRank targetRank,
                                     int roomCapacity) {
-        Iterator<invigilator> it = availablePool.iterator();
+        Iterator<Invigilator> it = availablePool.iterator();
         while (it.hasNext() && roomAssigned.size() < roomCapacity) {
-            invigilator inv = it.next();
+            Invigilator inv = it.next();
             if (inv.getRank() == targetRank && canAssign(inv, studentMajorsInRoom, roomAssigned)) {
                 roomAssigned.add(inv);
                 it.remove();
@@ -142,16 +142,16 @@ public class InvigilatorAssignmentService {
         }
     }
 
-    private boolean canAssign(invigilator inv, Set<String> studentMajorsInRoom, List<invigilator> assigned) {
+    private boolean canAssign(Invigilator inv, Set<String> studentMajorsInRoom, List<Invigilator> assigned) {
         // Rule 1: THE IRONCLAD SHIELD (If the invigilator's department matches ANY student in the room, BLOCK THEM)
         if (studentMajorsInRoom.contains(inv.getDepartment())) {
             return false;
         }
 
         // Rule 2: Chain of Command
-        if (inv.getRank() == invigilator.invigilatorRank.CHIEF) {
-            for (invigilator i : assigned) {
-                if (i.getRank() == invigilator.invigilatorRank.CHIEF) {
+        if (inv.getRank() == Invigilator.invigilatorRank.CHIEF) {
+            for (Invigilator i : assigned) {
+                if (i.getRank() == Invigilator.invigilatorRank.CHIEF) {
                     return false;
                 }
             }
@@ -176,7 +176,7 @@ public class InvigilatorAssignmentService {
         Room newRoom = roomRepo.findByRoomName(roomName)
                 .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
 
-        invigilator newInvigilator = invigilatorRepo.findByInvigilatorName(invigilatorName)
+        Invigilator newInvigilator = invigilatorRepo.findByInvigilatorName(invigilatorName)
                 .orElseThrow(() -> new RuntimeException("Invigilator not found with Invigilator Name: " + invigilatorName));
 
 

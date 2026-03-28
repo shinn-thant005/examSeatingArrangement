@@ -5,11 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 
-public interface seatingRepository extends JpaRepository<Seating, Integer> {
+public interface SeatingRepository extends JpaRepository<Seating, Integer> {
     // Fetch all seated students for a specific room
     List<Seating> findByRoom_RoomId(Integer roomId);
 

@@ -3,18 +3,18 @@ package uniproject.exam.seating.seating;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import uniproject.exam.seating.room.Room;
-import uniproject.exam.seating.room.roomRepository;
+import uniproject.exam.seating.room.RoomRepository;
 import uniproject.exam.seating.student.Student;
-import uniproject.exam.seating.student.studentRepository;
+import uniproject.exam.seating.student.StudentRepository;
 
 import java.util.*;
 
 @Service
-public class seatingService {
+public class SeatingService {
 
-    private final seatingRepository seatingRepo;
-    private final studentRepository studentRepo;
-    private final roomRepository roomRepo;
+    private final SeatingRepository seatingRepo;
+    private final StudentRepository studentRepo;
+    private final RoomRepository roomRepo;
 
     // GA Parameters
     private static final int POPULATION_SIZE = 100;
@@ -22,7 +22,7 @@ public class seatingService {
     private static final double MUTATION_RATE = 0.1;
     private static final int TOURNAMENT_SIZE = 5;
 
-    public seatingService(studentRepository studentRepo, roomRepository roomRepo,  seatingRepository seatingRepository) {
+    public SeatingService(StudentRepository studentRepo, RoomRepository roomRepo, SeatingRepository seatingRepository) {
         this.studentRepo = studentRepo;
         this.roomRepo = roomRepo;
         this.seatingRepo = seatingRepository;

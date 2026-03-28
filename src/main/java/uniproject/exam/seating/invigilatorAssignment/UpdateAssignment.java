@@ -1,11 +1,11 @@
 package uniproject.exam.seating.invigilatorAssignment;
 
 
-public class updateAssignment {
+public class UpdateAssignment {
     private String roomName;
     private String invigilatorName;
 
-    public updateAssignment(String roomName, String invigilatorName) {
+    public UpdateAssignment(String roomName, String invigilatorName) {
         this.roomName = roomName;
         this.invigilatorName = invigilatorName;
     }

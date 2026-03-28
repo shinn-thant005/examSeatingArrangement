@@ -1,17 +1,17 @@
 package uniproject.exam.seating.student;
 
 import org.springframework.stereotype.Service;
-import uniproject.exam.seating.seating.seatingRepository;
+import uniproject.exam.seating.seating.SeatingRepository;
 
 import java.util.List;
 
 
 @Service
-public class studentService {
-    private studentRepository studentRepository;
-    private seatingRepository seatingRepository;
+public class StudentService {
+    private StudentRepository studentRepository;
+    private SeatingRepository seatingRepository;
 
-    public studentService(studentRepository studentRepository, seatingRepository seatingRepository) {
+    public StudentService(StudentRepository studentRepository, SeatingRepository seatingRepository) {
         this.studentRepository = studentRepository;
         this.seatingRepository = seatingRepository;
     }

@@ -3,7 +3,7 @@ package uniproject.exam.seating.invigilator;
 import jakarta.persistence.*;
 
 @Entity
-public class invigilator {
+public class Invigilator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer invigilatorId;
@@ -20,7 +20,7 @@ public class invigilator {
 
     private String department;
 
-    public invigilator() {}
+    public Invigilator() {}
 
     public invigilatorRank getRank() {
         return rank;
@@ -30,7 +30,7 @@ public class invigilator {
         this.rank = rank;
     }
 
-    public invigilator(Integer invigilatorId, String invigilatorName, String department, invigilatorRank rank) {
+    public Invigilator(Integer invigilatorId, String invigilatorName, String department, invigilatorRank rank) {
         this.invigilatorId = invigilatorId;
         this.invigilatorName = invigilatorName;
         this.department = department;

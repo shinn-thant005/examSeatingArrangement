@@ -1,16 +1,19 @@
 package uniproject.exam.seating.exam;
 
 import org.springframework.stereotype.Service;
+import uniproject.exam.seating.invigilatorAssignment.InvigilatorAssignmentRepository;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class examService {
-    public examRepository examRepository;
+public class ExamService {
+    public ExamRepository examRepository;
+    public InvigilatorAssignmentRepository assignmentRepo;
 
-    public examService(examRepository examRepository) {
+    public ExamService(ExamRepository examRepository, InvigilatorAssignmentRepository assignmentRepo) {
         this.examRepository = examRepository;
+        this.assignmentRepo = assignmentRepo;
     }
 
     public List<Exam> findAllExam() {
@@ -22,6 +25,7 @@ public class examService {
     }
 
     public void deleteExam(Integer examId) {
+        assignmentRepo.deleteAllByExam_ExamId(examId);
         examRepository.deleteById(examId);
     }
 
@@ -34,6 +38,7 @@ public class examService {
     }
 
     public void deleteAllExam() {
+        assignmentRepo.deleteAll();
         examRepository.deleteAll();
     }
 }

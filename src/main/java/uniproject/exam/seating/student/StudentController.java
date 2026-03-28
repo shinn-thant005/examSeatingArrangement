@@ -5,11 +5,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/student")
-public class studentController {
+public class StudentController {
 
-    studentService studentService;
+    StudentService studentService;
 
-    public studentController(studentService studentService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 

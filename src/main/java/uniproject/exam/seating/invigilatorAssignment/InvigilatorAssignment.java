@@ -2,7 +2,7 @@ package uniproject.exam.seating.invigilatorAssignment;
 
 import jakarta.persistence.*;
 import uniproject.exam.seating.exam.Exam;
-import uniproject.exam.seating.invigilator.invigilator;
+import uniproject.exam.seating.invigilator.Invigilator;
 import uniproject.exam.seating.room.Room;
 
 @Entity
@@ -21,11 +21,11 @@ public class InvigilatorAssignment {
 
     @ManyToOne
     @JoinColumn(name = "invigilatorId", nullable = false)
-    private invigilator invigilator;
+    private Invigilator invigilator;
 
     public InvigilatorAssignment() {}
 
-    public InvigilatorAssignment(Exam exam, Room room, invigilator invigilator) {
+    public InvigilatorAssignment(Exam exam, Room room, Invigilator invigilator) {
         this.exam = exam;
         this.room = room;
         this.invigilator = invigilator;
@@ -55,11 +55,11 @@ public class InvigilatorAssignment {
         this.room = room;
     }
 
-    public invigilator getInvigilator() {
+    public Invigilator getInvigilator() {
         return invigilator;
     }
 
-    public void setInvigilator(invigilator invigilator) {
+    public void setInvigilator(Invigilator invigilator) {
         this.invigilator = invigilator;
     }
 }

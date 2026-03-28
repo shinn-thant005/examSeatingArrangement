@@ -6,10 +6,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/room")
-public class roomController {
-    roomService roomService;
+public class RoomController {
+    RoomService roomService;
 
-    public roomController(roomService roomService) {
+    public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
 

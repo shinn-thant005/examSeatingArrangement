@@ -1,22 +1,25 @@
 package uniproject.exam.seating.room;
 
 import org.springframework.stereotype.Service;
-import uniproject.exam.seating.seating.seatingRepository;
-import uniproject.exam.seating.student.studentRepository;
+import uniproject.exam.seating.invigilatorAssignment.InvigilatorAssignmentRepository;
+import uniproject.exam.seating.seating.SeatingRepository;
+import uniproject.exam.seating.student.StudentRepository;
 
 import java.util.List;
 
 @Service
-public class roomService {
-    public roomService(studentRepository studentRepository, seatingRepository seatingRepository, roomRepository roomRepository) {
+public class RoomService {
+    public RoomService(StudentRepository studentRepository, SeatingRepository seatingRepository, RoomRepository roomRepository, InvigilatorAssignmentRepository assignmentRepository) {
         this.studentRepository = studentRepository;
         this.seatingRepository = seatingRepository;
         this.roomRepository = roomRepository;
+        this.assignmentRepository = assignmentRepository;
     }
 
-    public studentRepository studentRepository;
-    public seatingRepository seatingRepository;
-    public roomRepository roomRepository;
+    public StudentRepository studentRepository;
+    public SeatingRepository seatingRepository;
+    public RoomRepository roomRepository;
+    public InvigilatorAssignmentRepository assignmentRepository;
 
     public List<Room> getAllRooms() {
         return roomRepository.findAll();

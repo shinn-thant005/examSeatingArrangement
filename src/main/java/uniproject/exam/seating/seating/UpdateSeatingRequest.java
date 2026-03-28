@@ -1,12 +1,12 @@
 package uniproject.exam.seating.seating;
 
-public class updateSeatingRequest {
+public class UpdateSeatingRequest {
     private String rollNo;
     private String roomName;
     private Integer rowNum;
     private Integer columnNum;
 
-    public updateSeatingRequest(String rollNo, String roomName, Integer rowNum, Integer columnNum) {
+    public UpdateSeatingRequest(String rollNo, String roomName, Integer rowNum, Integer columnNum) {
         this.rollNo = rollNo;
         this.roomName = roomName;
         this.rowNum = rowNum;

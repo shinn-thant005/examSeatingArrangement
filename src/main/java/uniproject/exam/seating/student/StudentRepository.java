@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional; // Add this
 import java.util.List;
 
-public interface studentRepository extends JpaRepository<Student, String> {
+public interface StudentRepository extends JpaRepository<Student, String> {
     public List<Student> findByIsSeatedFalse();
 
     @Transactional

@@ -2,23 +2,23 @@ package uniproject.exam.seating.seating;
 
 import org.springframework.web.bind.annotation.*;
 import uniproject.exam.seating.room.Room;
-import uniproject.exam.seating.room.roomService;
+import uniproject.exam.seating.room.RoomService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/seating")
-public class seatingController {
-    seatingService seatingService;
-    roomService roomService;
+public class SeatingController {
+    SeatingService seatingService;
+    RoomService roomService;
 
-    public seatingController(seatingService seatingService,  roomService roomService) {
+    public SeatingController(SeatingService seatingService, RoomService roomService) {
         this.seatingService = seatingService;
         this.roomService = roomService;
     }
 
     @GetMapping("/generate-plan/{roomId}")
-    public seatingService.SeatingPlanResponse generatePlan(@PathVariable Integer roomId) {
+    public SeatingService.SeatingPlanResponse generatePlan(@PathVariable Integer roomId) {
         return seatingService.generateSeatingPlan(roomId);
     }
 
@@ -28,7 +28,7 @@ public class seatingController {
     }
 
     @GetMapping("/view-plan/{roomID}")
-    public seatingService.SeatingPlanResponse viewPlan(@PathVariable Integer roomID) {
+    public SeatingService.SeatingPlanResponse viewPlan(@PathVariable Integer roomID) {
         return seatingService.getSavedSeatingPlan(roomID);
     }
 
@@ -45,7 +45,7 @@ public class seatingController {
     }
 
     @PutMapping("update-plan/{seatingId}")
-    public String updatePlan(@RequestBody updateSeatingRequest seating, @PathVariable Integer seatingId) {
+    public String updatePlan(@RequestBody UpdateSeatingRequest seating, @PathVariable Integer seatingId) {
         seatingService.updateSeatingPlan(seatingId, seating.getRollNo(), seating.getRoomName(), seating.getRowNum(), seating.getColumnNum());
         return "The seating plan with id " + seatingId + " has been updated.\n" +
                 "New student: " + seating.getRollNo() + "\n" +
@@ -55,7 +55,7 @@ public class seatingController {
     }
 
     @PostMapping("add-plan")
-    public String addPlan(@RequestBody updateSeatingRequest newSeating) {
+    public String addPlan(@RequestBody UpdateSeatingRequest newSeating) {
         seatingService.addSeatingPlan(newSeating.getRollNo(), newSeating.getRoomName(), newSeating.getRowNum(), newSeating.getColumnNum());
         return "New seating plan has been added!";
     }
