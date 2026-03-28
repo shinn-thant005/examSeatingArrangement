@@ -3,6 +3,10 @@ package uniproject.exam.seating.seating;
 import org.springframework.web.bind.annotation.*;
 import uniproject.exam.seating.room.Room;
 import uniproject.exam.seating.room.RoomService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import uniproject.exam.seating.util.PdfGeneratorUtil;
 
 import java.util.List;
 
@@ -58,5 +62,20 @@ public class SeatingController {
     public String addPlan(@RequestBody UpdateSeatingRequest newSeating) {
         seatingService.addSeatingPlan(newSeating.getRollNo(), newSeating.getRoomName(), newSeating.getRowNum(), newSeating.getColumnNum());
         return "New seating plan has been added!";
+    }
+
+    @GetMapping("/download-plan-pdf/{roomId}")
+    public ResponseEntity<byte[]> downloadSeatingPlanPdf(@PathVariable Integer roomId) {
+        // 1. Get the existing plan data
+        SeatingService.SeatingPlanResponse plan = seatingService.getSavedSeatingPlan(roomId);
+
+        // 2. Generate PDF bytes
+        byte[] pdfBytes = PdfGeneratorUtil.generateSeatingGridPdf(plan);
+
+        // 3. Return as a downloadable file
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=SeatingPlan_" + plan.getRoomName() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }
