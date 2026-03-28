@@ -12,6 +12,7 @@ import uniproject.exam.seating.room.Room;
 import uniproject.exam.seating.room.RoomRepository;
 import uniproject.exam.seating.seating.Seating;
 import uniproject.exam.seating.seating.SeatingRepository;
+import java.util.stream.Collectors;
 
 import java.util.*;
 
@@ -51,11 +52,18 @@ public class InvigilatorAssignmentService {
 
         List<Room> allRooms = roomRepo.findAll();
 
-        // --- NEW DOUBLE-BOOKING PREVENTION LOGIC ---
+        // --- NEW EFFICIENCY FIX: Fetch all seatings ONCE and group in memory ---
+        // This prevents executing a database query inside the loop for every single room
+        List<Seating> allSeatings = seatingRepo.findAll();
+        Map<Integer, List<Seating>> seatsByRoom = allSeatings.stream()
+                .collect(Collectors.groupingBy(s -> s.getRoom().getRoomId()));
+        // -----------------------------------------------------------------------
+
+        // --- DOUBLE-BOOKING PREVENTION LOGIC ---
         // 1. Get ALL invigilators in the system
         List<Invigilator> allInvigilators = invigilatorRepo.findAll();
 
-        // 2. Ask the database: Who is already busy at this exact Date and Time (from other exams)?
+        // 2. Ask the database: Who is already busy at this exact Date and Time?
         List<Invigilator> busyInvigilators = assignmentRepo.findBusyInvigilators(exam.getExamDate(), exam.getExamTime());
 
         // 3. Create the available pool by removing the busy ones
@@ -73,7 +81,8 @@ public class InvigilatorAssignmentService {
             int requiredCapacity = room.getNumOfInvigilators() != null ? room.getNumOfInvigilators() : 0;
             if (requiredCapacity == 0) continue;
 
-            List<Seating> roomSeats = seatingRepo.findByRoom_RoomId(room.getRoomId());
+            // EFFICIENCY FIX: Look up the room's seats from our memory map (Zero DB calls here!)
+            List<Seating> roomSeats = seatsByRoom.getOrDefault(room.getRoomId(), new ArrayList<>());
             if (roomSeats.isEmpty()) continue;
 
             // --- THE MIXED ROOM FIX ---
@@ -99,7 +108,7 @@ public class InvigilatorAssignmentService {
 
             List<Invigilator> assignedToThisRoom = new ArrayList<>();
 
-            // We pass the Set of ALL majors in the room to the helper methods now!
+            // Pass the Set of ALL majors in the room to the helper methods
             assignSpecificRank(availableInvigilators, assignedToThisRoom, allStudentMajorsInRoom,
                     Invigilator.invigilatorRank.CHIEF, requiredCapacity);
 
@@ -118,11 +127,15 @@ public class InvigilatorAssignmentService {
                 }
             }
 
+            // Optional future safeguard: If assignedToThisRoom.size() < requiredCapacity,
+            // you could log a warning here that you ran out of available invigilators!
+
             for (Invigilator inv : assignedToThisRoom) {
                 newAssignments.add(new InvigilatorAssignment(exam, room, inv));
             }
         }
 
+        // Save all assignments in one large batch at the very end
         assignmentRepo.saveAll(newAssignments);
     }
 
