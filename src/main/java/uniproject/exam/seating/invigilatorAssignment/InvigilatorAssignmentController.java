@@ -31,10 +31,16 @@ public class InvigilatorAssignmentController {
         return "Assignment with Id " + AssignmentId + " has been deleted successfully.";
     }
 
-    @PostMapping("/delete-room-assignment/{examId}")
+    @DeleteMapping("/delete-room-assignment/{examId}")
     public String deleteRoomAssignment(@PathVariable Integer examId) {
         invigilatorAssignmentService.deleteAllAssignmentByExam(examId);
         return "Assignment with Exam Id " + examId + " has been deleted successfully.";
+    }
+
+    @PutMapping("update-assignment/{AssignmentId}")
+    public String updateAssignment(@PathVariable Integer AssignmentId, @RequestBody updateAssignment updateAssignment) {
+
+        return "Successfully updated the Assignment with ID: " + AssignmentId;
     }
 
 }

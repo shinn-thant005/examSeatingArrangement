@@ -151,4 +151,21 @@ public class InvigilatorAssignmentService {
     public void deleteAllAssignmentByExam(Integer examId) {
         assignmentRepo.deleteAllByExam_ExamId(examId);
     }
+
+    public void updateAssignment(Integer AssignmentId, String roomName, String invigilatorName) {
+        InvigilatorAssignment existingAssignment = assignmentRepo.findById(AssignmentId)
+                .orElseThrow(() -> new RuntimeException("Assignment record not found with ID: " + AssignmentId));
+
+        Room newRoom = roomRepo.findByRoomName(roomName)
+                .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
+
+        invigilator newInvigilator = invigilatorRepo.findByInvigilatorName(invigilatorName)
+                .orElseThrow(() -> new RuntimeException("Invigilator not found with Invigilator Name: " + invigilatorName));
+
+        existingAssignment.setRoom(newRoom);
+        existingAssignment.setInvigilator(newInvigilator);
+        assignmentRepo.save(existingAssignment);
+    }
+
+
 }
