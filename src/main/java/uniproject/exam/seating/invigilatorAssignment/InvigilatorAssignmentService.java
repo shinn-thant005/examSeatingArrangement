@@ -1,7 +1,9 @@
 package uniproject.exam.seating.invigilatorAssignment;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import uniproject.exam.seating.exam.Exam;
 import uniproject.exam.seating.exam.examRepository;
 import uniproject.exam.seating.invigilator.invigilator;
@@ -43,12 +45,26 @@ public class InvigilatorAssignmentService {
         Exam exam = examRepo.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Exam not found!"));
 
+        // Clear existing assignments for THIS specific exam to avoid duplicates
         assignmentRepo.deleteByExam_ExamId(examId);
         assignmentRepo.flush();
 
         List<Room> allRooms = roomRepo.findAll();
-        List<invigilator> availableInvigilators = new ArrayList<>(invigilatorRepo.findAll());
+
+        // --- NEW DOUBLE-BOOKING PREVENTION LOGIC ---
+        // 1. Get ALL invigilators in the system
+        List<invigilator> allInvigilators = invigilatorRepo.findAll();
+
+        // 2. Ask the database: Who is already busy at this exact Date and Time (from other exams)?
+        List<invigilator> busyInvigilators = assignmentRepo.findBusyInvigilators(exam.getExamDate(), exam.getExamTime());
+
+        // 3. Create the available pool by removing the busy ones
+        List<invigilator> availableInvigilators = new ArrayList<>(allInvigilators);
+        availableInvigilators.removeAll(busyInvigilators);
+
+        // Shuffle the remaining free invigilators
         Collections.shuffle(availableInvigilators);
+        // ------------------------------------------
 
         List<InvigilatorAssignment> newAssignments = new ArrayList<>();
         String targetMajor = exam.getTargetMajor();
@@ -163,6 +179,25 @@ public class InvigilatorAssignmentService {
         invigilator newInvigilator = invigilatorRepo.findByInvigilatorName(invigilatorName)
                 .orElseThrow(() -> new RuntimeException("Invigilator not found with Invigilator Name: " + invigilatorName));
 
+
+        Exam currentExam = targetAssignment.getExam();
+
+        // 2. Ask the database: Is this invigilator already booked for this Date and Time (somewhere else)?
+        boolean isDoubleBooked = assignmentRepo.existsByInvigilatorAndExam_ExamDateAndExam_ExamTimeAndAssignmentIdNot(
+                newInvigilator,
+                currentExam.getExamDate(),
+                currentExam.getExamTime(),
+                assignmentId
+        );
+
+        // 3. If they are busy, throw an HTTP 409 Conflict Exception!
+        if (isDoubleBooked) {
+            String errorMessage = "Double Booking Warning: " + invigilatorName +
+                    " is already assigned to another room on " + currentExam.getExamDate() +
+                    " during the " + currentExam.getExamTime() + " slot.";
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, errorMessage);
+        }
 
         targetAssignment.setRoom(newRoom);
         targetAssignment.setInvigilator(newInvigilator);
