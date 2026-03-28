@@ -7,8 +7,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "exam", uniqueConstraints = {
         @UniqueConstraint(
-                name = "uk_sub_date_time",
-                columnNames = {"subject", "examDate", "examTime"}
+                name = "uk_sub_date_time_major",
+                columnNames = {"subject", "examDate", "examTime", "targetMajor"}
         )
 })
 public class Exam {

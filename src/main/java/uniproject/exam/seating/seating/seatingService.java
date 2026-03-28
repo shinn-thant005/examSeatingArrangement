@@ -43,15 +43,16 @@ public class seatingService {
         int rows = room.getRowCapacity();
         int cols = room.getColumnCapacity();
         int roomCapacity = rows * cols;
+        int maxMajorsAllowed = (room.getMaxMajor() != null && room.getMaxMajor() > 0) ? room.getMaxMajor() : Integer.MAX_VALUE;
 
-        // --- NEW LOGIC: Only fetch students who are NOT seated yet ---
+        // Fetch students who are NOT seated yet
         List<Student> availableStudents = studentRepo.findByIsSeatedFalse();
 
         if (availableStudents.isEmpty()) {
             throw new RuntimeException("No unseated students available in the database!");
         }
 
-        // --- NEW LOGIC: Fair "Round-Robin" Selection by Major ---
+        // --- ENHANCED LOGIC: Respecting Room's Max Major Limit ---
 
         // 1. Group the students by their major
         Map<String, List<Student>> studentsByMajor = new HashMap<>();
@@ -59,14 +60,24 @@ public class seatingService {
             studentsByMajor.computeIfAbsent(s.getMajorId(), k -> new ArrayList<>()).add(s);
         }
 
+        // 2. Sort majors by the number of unseated students they have (largest groups first)
+        List<Map.Entry<String, List<Student>>> sortedMajors = new ArrayList<>(studentsByMajor.entrySet());
+        sortedMajors.sort((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()));
+
+        // 3. Keep only up to 'maxMajor' number of groups for this specific room
+        List<List<Student>> selectedMajorGroups = new ArrayList<>();
+        for (int i = 0; i < Math.min(maxMajorsAllowed, sortedMajors.size()); i++) {
+            selectedMajorGroups.add(sortedMajors.get(i).getValue());
+        }
+
         List<Student> studentsToSeat = new ArrayList<>();
 
-        // 2. Pick one student from each major in a loop until the room is full
+        // 4. Fair "Round-Robin" Selection by Major (ONLY using the selected allowed majors)
         boolean studentsAdded = true;
         while (studentsToSeat.size() < roomCapacity && studentsAdded) {
             studentsAdded = false; // Reset for this round
 
-            for (List<Student> majorList : studentsByMajor.values()) {
+            for (List<Student> majorList : selectedMajorGroups) {
                 // If this major still has students, and the room isn't full yet
                 if (!majorList.isEmpty() && studentsToSeat.size() < roomCapacity) {
                     studentsToSeat.add(majorList.remove(0)); // Take the first student and remove from pool
@@ -74,7 +85,7 @@ public class seatingService {
                 }
             }
         }
-        // --- END OF NEW LOGIC ---
+        // --- END OF ENHANCED LOGIC ---
 
         // Initialize Population
         List<Individual> population = new ArrayList<>();
@@ -123,7 +134,7 @@ public class seatingService {
         population.sort((a, b) -> Integer.compare(b.fitness, a.fitness));
         Individual bestSolution = population.get(0);
 
-        // --- NEW LOGIC: Mark the successfully seated students as true in the database ---
+        // Save to Database
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Student s = bestSolution.seating[r][c];
@@ -132,7 +143,7 @@ public class seatingService {
                     s.setAssignedRoom(room);
                     studentRepo.save(s); // Update database
 
-                    // 2. Save the exact seat coordinates to the Seating table (NEW LOGIC)
+                    // Save the exact seat coordinates to the Seating table
                     Seating seatingRecord = new Seating();
                     seatingRecord.setStudent(s);
                     seatingRecord.setRoom(room);
@@ -145,8 +156,6 @@ public class seatingService {
 
         return convertToResponse(room, bestSolution, rows, cols);
     }
-
-    // --- ADD THIS BELOW YOUR generateSeatingPlan METHOD ---
 
     public SeatingPlanResponse getSavedSeatingPlan(Integer roomId) {
         Room room = roomRepo.findById(roomId)
@@ -361,10 +370,12 @@ public class seatingService {
 
     public void deleteSeatingPlan(Integer SeatingId) {
         Seating currentSeating = seatingRepo.findById(SeatingId).orElse(null);
-        Student student = currentSeating.getStudent();
-        student.setSeated(false);
-        student.setAssignedRoom(null);
-        seatingRepo.deleteById(SeatingId);
+        if (currentSeating != null && currentSeating.getStudent() != null) {
+            Student student = currentSeating.getStudent();
+            student.setSeated(false);
+            student.setAssignedRoom(null);
+            seatingRepo.deleteById(SeatingId);
+        }
     }
 
     public void deleteSeatingPlanByRoomId(Integer roomId) {
@@ -384,7 +395,6 @@ public class seatingService {
                 .orElseThrow(() -> new RuntimeException("Room not found with Room Name: " + roomName));
 
         // --- 1. BOUNDS CHECK: Is the seat inside the physical room? ---
-        // Assuming grids are 0-indexed (e.g., capacity 5 means valid rows are 0, 1, 2, 3, 4)
         if (rowNum < 0 || rowNum >= newRoom.getRowCapacity() ||
                 columnNum < 0 || columnNum >= newRoom.getColumnCapacity()) {
             throw new IllegalArgumentException("Position (" + rowNum + ", " + columnNum +
@@ -394,15 +404,12 @@ public class seatingService {
 
         // --- 2. OCCUPANCY CHECK: Is the seat already taken by someone else? ---
         Optional<Seating> occupant = seatingRepo.findByRoom_RoomIdAndRowNumAndColumnNum(newRoom.getRoomId(), rowNum, columnNum);
-        // If we found an occupant, and it's NOT the exact same seating record we are currently updating...
         if (occupant.isPresent() && !occupant.get().getSeatingId().equals(seatingId)) {
             throw new IllegalStateException("The seat at row " + rowNum + ", column " + columnNum +
                     " in " + roomName + " is already occupied by student " + occupant.get().getStudent().getRollNo());
         }
 
         // --- 3. DATA CONSISTENCY: Unseat the old student ---
-        // If you are editing the record to swap student A out for student B,
-        // student A must be marked as no longer seated.
         Student oldStudent = existingSeating.getStudent();
         if (oldStudent != null && !oldStudent.getRollNo().equals(rollNo)) {
             oldStudent.setSeated(false);

@@ -24,4 +24,17 @@ public class InvigilatorAssignmentController {
 
         return "Invigilator assignments have been successfully generated for Exam ID: " + examId;
     }
+
+    @DeleteMapping("/delete-assignment/{AssignmentId}")
+    public String deleteAssignment(@PathVariable Integer AssignmentId) {
+        invigilatorAssignmentService.deleteAssignmentById(AssignmentId);
+        return "Assignment with Id " + AssignmentId + " has been deleted successfully.";
+    }
+
+    @PostMapping("/delete-room-assignment/{examId}")
+    public String deleteRoomAssignment(@PathVariable Integer examId) {
+        invigilatorAssignmentService.deleteAllAssignmentByExam(examId);
+        return "Assignment with Exam Id " + examId + " has been deleted successfully.";
+    }
+
 }

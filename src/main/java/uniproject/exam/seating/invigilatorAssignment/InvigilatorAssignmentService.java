@@ -143,4 +143,12 @@ public class InvigilatorAssignmentService {
 
         return true;
     }
+
+    public void deleteAssignmentById(Integer AssignmentId) {
+        assignmentRepo.deleteById(AssignmentId);
+    }
+
+    public void deleteAllAssignmentByExam(Integer examId) {
+        assignmentRepo.deleteAllByExam_ExamId(examId);
+    }
 }
