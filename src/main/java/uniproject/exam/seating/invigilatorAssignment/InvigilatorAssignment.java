@@ -9,7 +9,7 @@ import uniproject.exam.seating.room.Room;
 public class InvigilatorAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int AssignmentId;
+    private Integer AssignmentId;
 
     @ManyToOne
     @JoinColumn(name = "examId", nullable = false)
