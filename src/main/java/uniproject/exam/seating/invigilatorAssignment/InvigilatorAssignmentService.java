@@ -14,6 +14,7 @@ import uniproject.exam.seating.seating.Seating;
 import uniproject.exam.seating.seating.SeatingRepository;
 import java.util.stream.Collectors;
 
+
 import java.util.*;
 
 @Service

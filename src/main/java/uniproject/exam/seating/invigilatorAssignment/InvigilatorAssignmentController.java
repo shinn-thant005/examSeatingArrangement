@@ -2,6 +2,10 @@ package uniproject.exam.seating.invigilatorAssignment;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import uniproject.exam.seating.util.PdfGeneratorUtil;
 
 @RestController
 @RequestMapping("/api/v1/invigilatorAssignment")
@@ -43,4 +47,18 @@ public class InvigilatorAssignmentController {
         return "Successfully updated the Assignment with ID: " + AssignmentId;
     }
 
+    @GetMapping("/download-pdf")
+    public ResponseEntity<byte[]> downloadAssignmentPdf() {
+        // 1. Fetch all assignments from the database
+        List<InvigilatorAssignment> assignments = invigilatorAssignmentService.getAllAssignment();
+
+        // 2. Pass the list to the utility method to generate the PDF bytes
+        byte[] pdfBytes = PdfGeneratorUtil.generateAssignmentPdf(assignments);
+
+        // 3. Return the response as a downloadable file
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Invigilator_Assignments.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
 }

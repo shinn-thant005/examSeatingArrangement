@@ -9,6 +9,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import uniproject.exam.seating.seating.SeatingService.SeatingPlanResponse;
+import uniproject.exam.seating.invigilatorAssignment.InvigilatorAssignment;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -40,7 +41,14 @@ public class PdfGeneratorUtil {
 
                 for (List<String> row : layout) {
                     for (String seatInfo : row) {
-                        Cell cell = new Cell().add(new Paragraph(seatInfo).setFontSize(8));
+                        // --- NEW: Strip out the Major ID for the PDF ---
+                        String displayText = seatInfo;
+                        if (!"EMPTY".equals(seatInfo) && seatInfo.contains(" (")) {
+                            // This takes "S001 (CS)" and cuts it down to just "S001"
+                            displayText = seatInfo.substring(0, seatInfo.indexOf(" ("));
+                        }
+
+                        Cell cell = new Cell().add(new Paragraph(displayText).setFontSize(8));
 
                         // Highlight empty seats vs occupied seats
                         if ("EMPTY".equals(seatInfo)) {
@@ -59,6 +67,48 @@ public class PdfGeneratorUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return out.toByteArray();
+    }
+
+    // Method for the Invigilator Assignment list
+    public static byte[] generateAssignmentPdf(List<InvigilatorAssignment> assignments) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = new PdfWriter(out);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // Title
+            document.add(new Paragraph("Invigilator Assignment Master Plan")
+                    .setBold().setFontSize(18).setTextAlignment(TextAlignment.CENTER));
+            document.add(new Paragraph("\n"));
+
+            // Create Table with 5 columns: Room, Invigilator, Subject, Date, Time
+            Table table = new Table(UnitValue.createPercentArray(new float[]{15, 25, 25, 20, 15})).useAllAvailableWidth();
+
+            // Table Headers
+            table.addHeaderCell(new Cell().add(new Paragraph("Room").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Invigilator").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Subject").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Date").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Time").setBold()));
+
+            // Populate Table Data
+            for (InvigilatorAssignment assign : assignments) {
+                table.addCell(new Paragraph(assign.getRoom().getRoomName()).setFontSize(10));
+                table.addCell(new Paragraph(assign.getInvigilator().getInvigilatorName() + " (" + assign.getInvigilator().getRank() + ")").setFontSize(10));
+                table.addCell(new Paragraph(assign.getExam().getSubject()).setFontSize(10));
+                table.addCell(new Paragraph(assign.getExam().getExamDate().toString()).setFontSize(10));
+                table.addCell(new Paragraph(assign.getExam().getExamTime().toString()).setFontSize(10));
+            }
+
+            document.add(table);
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return out.toByteArray();
     }
 }
