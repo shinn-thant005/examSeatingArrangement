@@ -163,51 +163,7 @@ public class InvigilatorAssignmentService {
         invigilator newInvigilator = invigilatorRepo.findByInvigilatorName(invigilatorName)
                 .orElseThrow(() -> new RuntimeException("Invigilator not found with Invigilator Name: " + invigilatorName));
 
-        Exam currentExam = targetAssignment.getExam();
-        invigilator oldInvigilator = targetAssignment.getInvigilator();
-        Room oldRoom = targetAssignment.getRoom();
 
-        // Fetch all assignments for this specific exam to check for conflicts
-        List<InvigilatorAssignment> currentExamAssignments = assignmentRepo.findByExam_ExamId(currentExam.getExamId());
-
-        // 1. INVIGILATOR SWAP
-        // If the new invigilator is already assigned elsewhere in this exam, swap them with the old invigilator
-        if (!oldInvigilator.getInvigilatorId().equals(newInvigilator.getInvigilatorId())) {
-            for (InvigilatorAssignment assignment : currentExamAssignments) {
-                if (assignment.getAssignmentId() != (assignmentId) &&
-                        assignment.getInvigilator().getInvigilatorId().equals(newInvigilator.getInvigilatorId())) {
-
-                    // Give the conflicting assignment the old invigilator
-                    assignment.setInvigilator(oldInvigilator);
-                    assignmentRepo.save(assignment);
-                    break;
-                }
-            }
-        }
-
-        // 2. ROOM SWAP
-        // If moving to a new room, check if the new room is already at max capacity.
-        // If it is, move one of the new room's assignments to the old room to make space.
-        if (!oldRoom.getRoomId().equals(newRoom.getRoomId())) {
-            long newRoomCurrentOccupancy = currentExamAssignments.stream()
-                    .filter(a -> a.getRoom().getRoomId().equals(newRoom.getRoomId()))
-                    .count();
-
-            if (newRoomCurrentOccupancy >= newRoom.getNumOfInvigilators()) {
-                for (InvigilatorAssignment assignment : currentExamAssignments) {
-                    if (assignment.getAssignmentId() != (assignmentId) &&
-                            assignment.getRoom().getRoomId().equals(newRoom.getRoomId())) {
-
-                        // Move one assignment from the full room into the old room
-                        assignment.setRoom(oldRoom);
-                        assignmentRepo.save(assignment);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // 3. Apply the final updates to the target assignment
         targetAssignment.setRoom(newRoom);
         targetAssignment.setInvigilator(newInvigilator);
         assignmentRepo.save(targetAssignment);

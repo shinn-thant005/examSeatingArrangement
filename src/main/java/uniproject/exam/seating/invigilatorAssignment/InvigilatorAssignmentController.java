@@ -39,7 +39,7 @@ public class InvigilatorAssignmentController {
 
     @PutMapping("update-assignment/{AssignmentId}")
     public String updateAssignment(@PathVariable Integer AssignmentId, @RequestBody updateAssignment updateAssignment) {
-
+        invigilatorAssignmentService.updateAssignment(AssignmentId, updateAssignment.getRoomName(), updateAssignment.getInvigilatorName());
         return "Successfully updated the Assignment with ID: " + AssignmentId;
     }
 
