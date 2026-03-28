@@ -134,25 +134,35 @@ public class SeatingService {
         population.sort((a, b) -> Integer.compare(b.fitness, a.fitness));
         Individual bestSolution = population.get(0);
 
-        // Save to Database
+        // --- PERFORMANCE FIX: BATCH SAVING ---
+        // Create lists to hold all updates in memory
+        List<Student> studentsToUpdate = new ArrayList<>();
+        List<Seating> seatingsToSave = new ArrayList<>();
+
+        // Populate the lists
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Student s = bestSolution.seating[r][c];
                 if (s != null) {
                     s.setSeated(true);
                     s.setAssignedRoom(room);
-                    studentRepo.save(s); // Update database
+                    studentsToUpdate.add(s); // Add to memory list
 
-                    // Save the exact seat coordinates to the Seating table
+                    // Create the exact seat coordinates
                     Seating seatingRecord = new Seating();
                     seatingRecord.setStudent(s);
                     seatingRecord.setRoom(room);
                     seatingRecord.setRowNum(r);
                     seatingRecord.setColumnNum(c);
-                    seatingRepo.save(seatingRecord);
+                    seatingsToSave.add(seatingRecord); // Add to memory list
                 }
             }
         }
+
+        // Fire exactly TWO fast queries to the database instead of hundreds
+        studentRepo.saveAll(studentsToUpdate);
+        seatingRepo.saveAll(seatingsToSave);
+        // -------------------------------------
 
         return convertToResponse(room, bestSolution, rows, cols);
     }
