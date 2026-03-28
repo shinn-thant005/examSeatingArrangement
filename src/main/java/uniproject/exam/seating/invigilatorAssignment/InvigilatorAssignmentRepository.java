@@ -29,6 +29,11 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
     @Query("DELETE FROM InvigilatorAssignment ia WHERE ia.exam.examId = :examId")
     void deleteAllByExam_ExamId(Integer examId);
 
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM InvigilatorAssignment ia WHERE ia.room.roomId = :roomId")
+    void deleteAllByRoom_RoomId(Integer roomId);
+
     boolean existsByInvigilatorAndExam_ExamDateAndExam_ExamTimeAndAssignmentIdNot(
             Invigilator invigilator,
             LocalDate examDate,

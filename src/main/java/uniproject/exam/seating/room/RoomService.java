@@ -35,6 +35,7 @@ public class RoomService {
         if (roomRepository.existsById(roomId)) {
             studentRepository.resetStudentByRoom(roomId);
             seatingRepository.deleteAllByRoom_RoomId(roomId);
+            assignmentRepository.deleteAllByRoom_RoomId(roomId);
             roomRepository.deleteById(roomId);
         }
 
