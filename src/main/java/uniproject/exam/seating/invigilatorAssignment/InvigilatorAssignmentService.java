@@ -12,6 +12,8 @@ import uniproject.exam.seating.room.Room;
 import uniproject.exam.seating.room.RoomRepository;
 import uniproject.exam.seating.seating.Seating;
 import uniproject.exam.seating.seating.SeatingRepository;
+import uniproject.exam.seating.seating.SeatingService;
+
 import java.util.stream.Collectors;
 
 
@@ -25,17 +27,20 @@ public class InvigilatorAssignmentService {
     private final ExamRepository examRepo;
     private final SeatingRepository seatingRepo;
     private final RoomRepository roomRepo;
+    private final SeatingService seatingService;
 
     public InvigilatorAssignmentService(InvigilatorAssignmentRepository assignmentRepo,
                                         InvigilatorRepository invigilatorRepo,
                                         ExamRepository examRepo,
                                         SeatingRepository seatingRepo,
-                                        RoomRepository roomRepo) {
+                                        RoomRepository roomRepo,
+                                        SeatingService seatingService) {
         this.assignmentRepo = assignmentRepo;
         this.invigilatorRepo = invigilatorRepo;
         this.examRepo = examRepo;
         this.seatingRepo = seatingRepo;
         this.roomRepo = roomRepo;
+        this.seatingService = seatingService;
     }
 
     public List<InvigilatorAssignment> getAllAssignment() {
@@ -216,6 +221,37 @@ public class InvigilatorAssignmentService {
         targetAssignment.setRoom(newRoom);
         targetAssignment.setInvigilator(newInvigilator);
         assignmentRepo.save(targetAssignment);
+    }
+
+    public List<InvigilatorDutyResponse> getInvigilatorDuties(String invigilatorName) {
+        List<InvigilatorAssignment> assignments = assignmentRepo.findByInvigilator_InvigilatorName(invigilatorName);
+
+        if (assignments.isEmpty()) {
+            throw new RuntimeException("No assignments found for Invigilator: " + invigilatorName);
+        }
+
+        List<InvigilatorDutyResponse> duties = new ArrayList<>();
+
+        for (InvigilatorAssignment assignment : assignments) {
+            SeatingService.SeatingPlanResponse plan;
+            try {
+                // Fetch the 2D visual layout using the existing method
+                plan = seatingService.getSavedSeatingPlan(assignment.getRoom().getRoomId());
+            } catch (RuntimeException e) {
+                // Handle the case where the exam assignment exists, but the seating hasn't been generated yet
+                plan = null;
+            }
+
+            duties.add(new InvigilatorDutyResponse(
+                    assignment.getExam().getSubject(),
+                    assignment.getExam().getExamDate(),
+                    assignment.getExam().getExamTime().name(),
+                    assignment.getRoom().getRoomName(),
+                    plan
+            ));
+        }
+
+        return duties;
     }
 
 

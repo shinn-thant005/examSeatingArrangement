@@ -1,7 +1,6 @@
 package uniproject.exam.seating.invigilator;
 
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -35,5 +34,4 @@ public class InvigilatorController {
         invigilatorService.updateInvigilator(invigilatorId,  invigilator.getInvigilatorName(), invigilator.getDepartment(), invigilator.getRank());
         return "Updated invigilator with id " + invigilatorId;
     }
-
 }

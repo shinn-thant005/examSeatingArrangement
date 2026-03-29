@@ -61,4 +61,14 @@ public class InvigilatorAssignmentController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
+    @GetMapping("/my-duties/{invigilatorName}")
+    public ResponseEntity<?> viewMyDuties(@PathVariable String invigilatorName) {
+        try {
+            List<InvigilatorDutyResponse> duties = invigilatorAssignmentService.getInvigilatorDuties(invigilatorName);
+            return ResponseEntity.ok(duties);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

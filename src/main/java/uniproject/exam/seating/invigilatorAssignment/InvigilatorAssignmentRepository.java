@@ -44,4 +44,7 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
     // --- NEW: Finds all invigilators busy at a specific date and time ---
     @Query("SELECT ia.invigilator FROM InvigilatorAssignment ia WHERE ia.exam.examDate = :examDate AND ia.exam.examTime = :examTime")
     List<Invigilator> findBusyInvigilators(@Param("examDate") LocalDate examDate, @Param("examTime") Exam.TimeOfDay examTime);
+
+    List<InvigilatorAssignment> findByInvigilator_InvigilatorName(String invigilatorName);
 }
+
