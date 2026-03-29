@@ -55,7 +55,6 @@ public class SeatingController {
                 "New student: " + seating.getRollNo() + "\n" +
                 "New Room: " + seating.getRoomName() + "\n" +
                 "New Position: (" + seating.getRowNum() + ", " + seating.getColumnNum() + ")";
-
     }
 
     @PostMapping("add-plan")
@@ -78,4 +77,17 @@ public class SeatingController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
+    @GetMapping("/my-seat/{rollNo}")
+    public ResponseEntity<?> viewMySeat(@PathVariable String rollNo) {
+        try {
+            StudentSeatResponse seat = seatingService.getStudentSeat(rollNo);
+            return ResponseEntity.ok(seat);
+        } catch (RuntimeException e) {
+            // Returns a 400 Bad Request if the student isn't found,
+            // so your React frontend can show a nice error message.
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

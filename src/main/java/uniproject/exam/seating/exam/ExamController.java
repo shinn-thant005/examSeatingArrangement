@@ -42,6 +42,4 @@ public class ExamController {
         examService.deleteAllExam();
         return "success deleting all Exam!";
     }
-
-
 }

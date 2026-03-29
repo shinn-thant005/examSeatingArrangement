@@ -28,4 +28,6 @@ public interface SeatingRepository extends JpaRepository<Seating, Integer> {
 
     @Transactional
     void deleteByStudent_RollNo(String rollNo);
+
+    Optional<Seating> findByStudent_RollNo(String rollNo);
 }

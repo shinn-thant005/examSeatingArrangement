@@ -475,4 +475,19 @@ public class SeatingService {
         student.setAssignedRoom(room);
         studentRepo.save(student);
     }
+
+    // ADD THIS METHOD to SeatingService.java
+    public StudentSeatResponse getStudentSeat(String rollNo) {
+        Seating seat = seatingRepo.findByStudent_RollNo(rollNo)
+                .orElseThrow(() -> new RuntimeException("No seating plan found for Roll No: " + rollNo + ". You may not be assigned yet."));
+
+        return new StudentSeatResponse(
+                seat.getStudent().getName(),
+                seat.getRoom().getRoomName(),
+                seat.getRoom().getFloor(),
+                seat.getRowNum(),
+                seat.getColumnNum()
+        );
+    }
+
 }
