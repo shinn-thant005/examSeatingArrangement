@@ -1,6 +1,6 @@
 package uniproject.exam.seating.invigilatorAssignment;
 
-import uniproject.exam.seating.seating.SeatingService.SeatingPlanResponse;
+
 import java.time.LocalDate;
 
 public class InvigilatorDutyResponse {
@@ -8,14 +8,14 @@ public class InvigilatorDutyResponse {
     private LocalDate examDate;
     private String examTime;
     private String roomName;
-    private SeatingPlanResponse seatingPlan;
+    private Integer roomId;
 
-    public InvigilatorDutyResponse(String subject, LocalDate examDate, String examTime, String roomName, SeatingPlanResponse seatingPlan) {
+    public InvigilatorDutyResponse(String subject, LocalDate examDate, String examTime, String roomName, Integer roomId) {
         this.subject = subject;
         this.examDate = examDate;
         this.examTime = examTime;
         this.roomName = roomName;
-        this.seatingPlan = seatingPlan;
+        this.roomId = roomId;
     }
 
     public String getSubject() { return subject; }
@@ -30,6 +30,6 @@ public class InvigilatorDutyResponse {
     public String getRoomName() { return roomName; }
     public void setRoomName(String roomName) { this.roomName = roomName; }
 
-    public SeatingPlanResponse getSeatingPlan() { return seatingPlan; }
-    public void setSeatingPlan(SeatingPlanResponse seatingPlan) { this.seatingPlan = seatingPlan; }
+    public Integer getRoomId() {return roomId;}
+    public void setRoomId(Integer roomId) {this.roomId = roomId;}
 }

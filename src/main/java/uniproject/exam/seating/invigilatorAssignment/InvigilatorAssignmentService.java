@@ -233,21 +233,12 @@ public class InvigilatorAssignmentService {
         List<InvigilatorDutyResponse> duties = new ArrayList<>();
 
         for (InvigilatorAssignment assignment : assignments) {
-            SeatingService.SeatingPlanResponse plan;
-            try {
-                // Fetch the 2D visual layout using the existing method
-                plan = seatingService.getSavedSeatingPlan(assignment.getRoom().getRoomId());
-            } catch (RuntimeException e) {
-                // Handle the case where the exam assignment exists, but the seating hasn't been generated yet
-                plan = null;
-            }
-
             duties.add(new InvigilatorDutyResponse(
                     assignment.getExam().getSubject(),
                     assignment.getExam().getExamDate(),
                     assignment.getExam().getExamTime().name(),
                     assignment.getRoom().getRoomName(),
-                    plan
+                    assignment.getRoom().getRoomId()
             ));
         }
 
