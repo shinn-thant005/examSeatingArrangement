@@ -24,12 +24,12 @@ public class ExamService {
         examRepository.save(exam);
     }
 
-    public void deleteExam(Integer examId) {
+    public void deleteExam(String examId) {
         assignmentRepo.deleteAllByExam_ExamId(examId);
         examRepository.deleteById(examId);
     }
 
-    public void updateExamById(Integer examId, String subject, LocalDate examDate, Exam.TimeOfDay examTime) {
+    public void updateExamById(String examId, String subject, LocalDate examDate, Exam.TimeOfDay examTime) {
         Exam newExam = examRepository.findById(examId).get();
         newExam.setSubject(subject);
         newExam.setExamDate(examDate);

@@ -23,9 +23,8 @@ public class InvigilatorAssignmentController {
     }
 
     @PostMapping("/generate-assignment/{examId}")
-    public String generateAssignmentPlan(@PathVariable Integer examId) {
+    public String generateAssignmentPlan(@PathVariable String examId) {
         invigilatorAssignmentService.generateAssignment(examId);
-
         return "Invigilator assignments have been successfully generated for Exam ID: " + examId;
     }
 
@@ -36,7 +35,7 @@ public class InvigilatorAssignmentController {
     }
 
     @DeleteMapping("/delete-room-assignment/{examId}")
-    public String deleteRoomAssignment(@PathVariable Integer examId) {
+    public String deleteRoomAssignment(@PathVariable String examId) {
         invigilatorAssignmentService.deleteAllAssignmentByExam(examId);
         return "Assignment with Exam Id " + examId + " has been deleted successfully.";
     }

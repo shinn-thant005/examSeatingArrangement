@@ -17,7 +17,7 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
     List<InvigilatorAssignment> findByInvigilator_InvigilatorId(Integer invigilatorId);
 
     @Transactional
-    void deleteByExam_ExamId(Integer examId);
+    void deleteByExam_ExamId(String examId);
 
     @Transactional
     @Modifying
@@ -27,7 +27,7 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
     @Transactional
     @Modifying
     @Query("DELETE FROM InvigilatorAssignment ia WHERE ia.exam.examId = :examId")
-    void deleteAllByExam_ExamId(Integer examId);
+    void deleteAllByExam_ExamId(String examId);
 
     @Transactional
     @Modifying
@@ -37,8 +37,7 @@ public interface InvigilatorAssignmentRepository extends JpaRepository<Invigilat
     boolean existsByInvigilatorAndExam_ExamDateAndExam_ExamTimeAndAssignmentIdNot(
             Invigilator invigilator,
             LocalDate examDate,
-            Exam.TimeOfDay examTime,
-            Integer assignmentId
+            Exam.TimeOfDay examTime,            Integer assignmentId
     );
 
     // --- NEW: Finds all invigilators busy at a specific date and time ---

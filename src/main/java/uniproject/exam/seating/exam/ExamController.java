@@ -26,13 +26,13 @@ public class ExamController {
     }
 
     @DeleteMapping("/delete-exam/{examId}")
-    public String deleteExam(@PathVariable Integer examId) {
+    public String deleteExam(@PathVariable String examId) {
         examService.deleteExam(examId);
         return "success deleting Exam!";
     }
 
     @PutMapping("/update-exam/{examId}")
-    public String updateExam(@PathVariable Integer examId, @RequestBody Exam exam) {
+    public String updateExam(@PathVariable String examId, @RequestBody Exam exam) {
         examService.updateExamById(examId, exam.getSubject(), exam.getExamDate(), exam.getExamTime());
         return "success updating Exam!";
     }

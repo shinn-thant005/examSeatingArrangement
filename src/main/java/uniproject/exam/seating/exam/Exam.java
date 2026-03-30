@@ -18,8 +18,7 @@ public class Exam {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer examId;
+    private String examId;
 
     private String subject;
 
@@ -34,7 +33,7 @@ public class Exam {
     public Exam() {
     }
 
-    public Exam(Integer examId, String subject, LocalDate examDate, TimeOfDay examTime, String targetMajor) {
+    public Exam(String examId, String subject, LocalDate examDate, TimeOfDay examTime, String targetMajor) {
         this.examId = examId;
         this.subject = subject;
         this.examDate = examDate;
@@ -50,11 +49,11 @@ public class Exam {
         this.targetMajor = targetMajor;
     }
 
-    public Integer getExamId() {
+    public String getExamId() {
         return examId;
     }
 
-    public void setExamId(Integer examId) {
+    public void setExamId(String examId) {
         this.examId = examId;
     }
 

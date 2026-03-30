@@ -48,7 +48,7 @@ public class InvigilatorAssignmentService {
     }
 
     @Transactional
-    public void generateAssignment(Integer examId) {
+    public void generateAssignment(String examId) {
         Exam exam = examRepo.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Exam not found!"));
 
@@ -183,7 +183,7 @@ public class InvigilatorAssignmentService {
         assignmentRepo.deleteById(AssignmentId);
     }
 
-    public void deleteAllAssignmentByExam(Integer examId) {
+    public void deleteAllAssignmentByExam(String examId) {
         assignmentRepo.deleteAllByExam_ExamId(examId);
     }
 
